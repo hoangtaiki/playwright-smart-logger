@@ -124,6 +124,30 @@ The `smartLog` fixture mirrors the `console` API:
 | `trace` | Stack trace |
 | `clear` / `getBuffer` / `flush` | Buffer control |
 
+## Logging Inside Custom Fixtures
+
+When extending the base test with custom fixtures, you **must** declare `smartLog` as a dependency so Playwright initializes the logger before your fixture runs:
+
+```typescript
+import { test as base, smartLog } from 'playwright-smart-logger';
+
+const test = base.extend({
+  autoTest: [async ({ page, smartLog: _smartLog }, use, testInfo) => {
+    //                       ^^^^^^^^^^^^^^^^ required — ensures the logger is initialized
+
+    // Global proxy works because smartLog fixture is active
+    smartLog.info('Setting up auto fixture');
+
+    // Or use the fixture directly
+    _smartLog.info('Also works');
+
+    await use();
+  }, { auto: true }],
+});
+```
+
+Without `smartLog` in the destructured dependencies, the global `smartLog` proxy will throw because the logger may not be initialized yet. See [Examples](Example.md#logging-inside-custom-fixtures) for more details.
+
 ## Documentation
 
 - **[Examples & API Details](Example.md)** — Usage patterns, configuration, real-world scenarios

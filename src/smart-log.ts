@@ -34,7 +34,7 @@ export interface LogEntry {
   groupLevel: number;
 }
 
-export interface SmartLogFixture {
+export interface SmartLog {
   /** General purpose logging */
   log(...args: any[]): void;
   /** Debug level logging */
@@ -493,9 +493,9 @@ const defaultOptions: Required<SmartLogOptions> = {
 
 // --- Global accessor ---
 
-let currentFixture: SmartLogFixture | null = null;
+let currentFixture: SmartLog | null = null;
 
-function assertFixtureActive(): SmartLogFixture {
+function assertFixtureActive(): SmartLog {
   if (!currentFixture) {
     throw new Error(
       'smartLog was accessed outside of a test that uses the smartLog fixture. ' +
@@ -510,7 +510,7 @@ function assertFixtureActive(): SmartLogFixture {
  *
  * @throws {Error} If called outside of a test using the smartLog fixture.
  */
-export function getSmartLog(): SmartLogFixture {
+export function getSmartLog(): SmartLog {
   return assertFixtureActive();
 }
 
@@ -531,10 +531,10 @@ export function getSmartLog(): SmartLogFixture {
  * }
  * ```
  */
-export const smartLog: SmartLogFixture = new Proxy({} as SmartLogFixture, {
+export const smartLog: SmartLog = new Proxy({} as SmartLog, {
   get(_, prop: string) {
     const fixture = assertFixtureActive();
-    const value = fixture[prop as keyof SmartLogFixture];
+    const value = fixture[prop as keyof SmartLog];
     if (typeof value === 'function') {
       return value.bind(fixture);
     }
@@ -542,15 +542,15 @@ export const smartLog: SmartLogFixture = new Proxy({} as SmartLogFixture, {
   },
 });
 
-export const test = base.extend<{ smartLog: SmartLogFixture }>({
-  smartLog: async ({ page }: { page: Page }, use: (fixture: SmartLogFixture) => Promise<void>, testInfo: TestInfo) => {
+export const test = base.extend<{ smartLog: SmartLog }>({
+  smartLog: async ({ page }: { page: Page }, use: (fixture: SmartLog) => Promise<void>, testInfo: TestInfo) => {
     // Get options from test.use() or use defaults
     const userOptions = (testInfo.project.use as any).smartLog || {};
     const options: Required<SmartLogOptions> = { ...defaultOptions, ...userOptions };
 
     const logger = new SmartLogger(testInfo, page, options);
 
-    const fixture: SmartLogFixture = {
+    const fixture: SmartLog = {
       log: (...args) => logger.log(...args),
       debug: (...args) => logger.debug(...args),
       info: (...args) => logger.info(...args),

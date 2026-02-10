@@ -22,6 +22,7 @@ Comprehensive usage patterns, API reference, configuration, and real-world scena
   - [Project-Specific Configuration](#project-specific-configuration)
 - [Log Entry Structure](#log-entry-structure)
 - [Real-World Scenarios](#real-world-scenarios)
+- [Logging Inside Custom Fixtures](#logging-inside-custom-fixtures)
 - [Custom Fixture Extensions](#custom-fixture-extensions)
 
 ---
@@ -562,6 +563,107 @@ test('performance metrics', async ({ page, smartLog }) => {
   smartLog.timeEnd('total');
 });
 ```
+
+---
+
+## Logging Inside Custom Fixtures
+
+You can use `smartLog` inside custom fixtures, but there is an important rule: **your fixture must declare `smartLog` as a dependency**. Without it, Playwright may run your fixture before the logger is initialized, and the global `smartLog` proxy will throw an error.
+
+### The Problem
+
+```typescript
+import { test as base, smartLog } from 'playwright-smart-logger';
+
+const test = base.extend({
+  // BAD — smartLog is NOT listed as a dependency
+  myFixture: [async ({ page }, use) => {
+    smartLog.info('Setting up');  // Throws! Logger may not be initialized yet
+    await use();
+  }, { auto: true }],
+});
+```
+
+Playwright runs fixtures in dependency order. Since `myFixture` only depends on `page`, there is no guarantee the `smartLog` fixture has been set up first. When it hasn't, the global proxy calls `assertFixtureActive()` and throws:
+
+> *"smartLog was accessed outside of a test that uses the smartLog fixture."*
+
+### The Fix
+
+Add `smartLog` to your fixture's dependencies:
+
+```typescript
+import { test as base, smartLog } from 'playwright-smart-logger';
+
+const test = base.extend({
+  // GOOD — smartLog is declared as a dependency
+  myFixture: [async ({ page, smartLog: _smartLog }, use) => {
+    //                       ^^^^^^^^^^^^^^^^ tells Playwright to initialize the logger first
+
+    // Both the global proxy and the fixture variable work
+    smartLog.info('Setting up via global proxy');
+    _smartLog.info('Setting up via fixture');
+
+    await use();
+  }, { auto: true }],
+});
+```
+
+### Full Example: Auto-Login Fixture
+
+```typescript
+import { test as base, smartLog } from 'playwright-smart-logger';
+
+interface Env {
+  apiHelper?: APIHelper;
+}
+
+const env: Env = {};
+
+const test = base.extend({
+  autoSetup: [async ({ page, smartLog: _smartLog }, use, testInfo) => {
+    smartLog.group('Auto Setup');
+
+    if (!env.apiHelper) {
+      const helper = new APIHelper();
+      await helper.signIn();
+      env.apiHelper = helper;
+      smartLog.info('API helper initialized and signed in');
+    } else {
+      smartLog.debug('Reusing existing API helper');
+    }
+
+    smartLog.groupEnd();
+    await use();
+  }, { auto: true }],
+});
+
+export { test };
+```
+
+### Using the Fixture Variable Directly
+
+If you prefer, you can skip the global proxy entirely and use the fixture variable:
+
+```typescript
+const test = base.extend({
+  seedData: async ({ smartLog }, use) => {
+    smartLog.group('Seed Data');
+    smartLog.info('Creating test users');
+    // ... seed logic
+    smartLog.groupEnd();
+
+    await use();
+
+    smartLog.group('Cleanup');
+    smartLog.info('Removing test data');
+    // ... cleanup logic
+    smartLog.groupEnd();
+  },
+});
+```
+
+Both approaches write to the same buffer and follow the same flush rules.
 
 ---
 

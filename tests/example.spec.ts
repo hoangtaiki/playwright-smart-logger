@@ -1,4 +1,4 @@
-import { test, expect } from '../src/smart-log-fixture';
+import { test, expect } from '../src/smart-log';
 
 test.describe('Smart Logger Examples', () => {
 
