@@ -1,76 +1,54 @@
-# Playwright Smart Logger - Examples
+# Playwright Smart Logger - Examples & API Details
 
-Comprehensive usage patterns and real-world scenarios for the `smartLog` fixture.
+Comprehensive usage patterns, API reference, configuration, and real-world scenarios.
 
 ## Table of Contents
 
-- [Basic Usage](#basic-usage)
-- [Organized Logging with Groups](#organized-logging-with-groups)
-- [Data Display with Tables and Dir](#data-display-with-tables-and-dir)
-- [Performance Timing](#performance-timing)
-- [Assertions and Counters](#assertions-and-counters)
-- [Stack Traces](#stack-traces)
-- [FlushOn Configuration](#flushon-configuration)
-- [Browser Console Capture](#browser-console-capture)
+- [API Reference](#api-reference)
+  - [Logging](#logging)
+  - [Grouping](#grouping)
+  - [Data Display](#data-display)
+  - [Timing](#timing)
+  - [Assertions](#assertions)
+  - [Counters](#counters)
+  - [Stack Traces](#stack-traces)
+  - [Buffer Control](#buffer-control)
+- [Global Access / Page Object Models](#global-access--page-object-models)
+- [Configuration](#configuration)
+  - [flushOn](#flushon)
+  - [maxBufferSize](#maxbuffersize)
+  - [capturePageConsole](#capturepageconsole)
+  - [Environment-Based Configuration](#environment-based-configuration)
+  - [Project-Specific Configuration](#project-specific-configuration)
+- [Log Entry Structure](#log-entry-structure)
 - [Real-World Scenarios](#real-world-scenarios)
 - [Custom Fixture Extensions](#custom-fixture-extensions)
-- [Project-Specific Configuration](#project-specific-configuration)
 
 ---
 
-## Basic Usage
+## API Reference
 
-### Getting Started
+The `smartLog` fixture provides the same methods as `console`. All methods accept variadic arguments.
 
-Replace your Playwright import and add `smartLog` to your test signature:
-
-```typescript
-import { test, expect } from 'playwright-smart-logger';
-
-test('my first smart log test', async ({ page, smartLog }) => {
-  smartLog.info('Starting navigation');
-  await page.goto('https://example.com');
-
-  smartLog.log('Page loaded:', page.url());
-  smartLog.warn('This only shows if the test fails');
-
-  expect(await page.title()).toBeTruthy();
-});
-```
-
-### Multiple Log Levels
+### Logging
 
 ```typescript
 test('log levels', async ({ smartLog }) => {
-  smartLog.log('General message');       // White
-  smartLog.debug('Debugging details');   // Magenta
-  smartLog.info('Informational');        // Blue
+  smartLog.log('General message');        // White
+  smartLog.debug('Debugging details');    // Magenta
+  smartLog.info('Informational');         // Blue
   smartLog.warn('Potential issue');       // Yellow
-  smartLog.error('Something went wrong');// Red
+  smartLog.error('Something went wrong'); // Red
+
+  // Multiple arguments, just like console
+  smartLog.log('User:', { name: 'Alice' }, 'logged in at', new Date());
+  smartLog.error('Request failed', { status: 500, url: '/api' });
 });
 ```
 
-### Variadic Arguments
+### Grouping
 
-All logging methods accept multiple arguments, joined with spaces:
-
-```typescript
-test('variadic args', async ({ page, smartLog }) => {
-  const user = { name: 'Alice', role: 'admin' };
-  smartLog.log('User:', user, 'logged in at', new Date().toISOString());
-
-  const status = 200;
-  smartLog.info('Response status:', status, '- OK');
-
-  smartLog.error('Failed to load', page.url(), 'after', 3, 'retries');
-});
-```
-
----
-
-## Organized Logging with Groups
-
-Groups add visual indentation to structure your logs by test phase:
+Groups add indentation to structure logs by test phase:
 
 ```typescript
 test('user registration flow', async ({ page, smartLog }) => {
@@ -80,16 +58,9 @@ test('user registration flow', async ({ page, smartLog }) => {
   smartLog.log('Email:', email);
   smartLog.groupEnd();
 
-  smartLog.group('Navigation');
-  await page.goto('https://app.com/register');
-  smartLog.log('Registration page loaded');
-  smartLog.groupEnd();
-
   smartLog.group('Form Interaction');
   await page.fill('#email', email);
   smartLog.log('Email filled');
-  await page.fill('#password', 'SecurePass123!');
-  smartLog.log('Password filled');
   await page.click('#register-btn');
   smartLog.log('Form submitted');
   smartLog.groupEnd();
@@ -107,58 +78,47 @@ test('user registration flow', async ({ page, smartLog }) => {
 10:30:01.123 [LOG] Setup
 10:30:01.124 [LOG]   Generating test data
 10:30:01.124 [LOG]   Email: test-1234567890@example.com
-10:30:01.200 [LOG] Navigation
-10:30:01.500 [LOG]   Registration page loaded
 10:30:01.501 [LOG] Form Interaction
 10:30:01.600 [LOG]   Email filled
-10:30:01.700 [LOG]   Password filled
 10:30:01.800 [LOG]   Form submitted
 10:30:01.801 [LOG] Validation
 10:30:02.100 [LOG]   Registration successful
 === End Smart Logger Output ===
 ```
 
-### Nested Groups
+Groups can be nested:
 
 ```typescript
-test('nested groups', async ({ page, smartLog }) => {
-  smartLog.group('API Testing');
-
+smartLog.group('API Testing');
   smartLog.group('Authentication');
-  smartLog.log('Testing login endpoint');
   smartLog.log('Token received');
   smartLog.groupEnd();
 
   smartLog.group('CRUD Operations');
   smartLog.log('Creating resource');
-  smartLog.log('Reading resource');
-  smartLog.log('Updating resource');
-  smartLog.log('Deleting resource');
   smartLog.groupEnd();
-
-  smartLog.groupEnd();
-});
+smartLog.groupEnd();
 ```
 
----
-
-## Data Display with Tables and Dir
-
-### Table - Array of Objects
+### Data Display
 
 ```typescript
-test('API response validation', async ({ page, smartLog }) => {
-  const endpoints = [
-    { path: '/api/users', method: 'GET', expected: 200 },
-    { path: '/api/posts', method: 'GET', expected: 200 },
-    { path: '/api/auth',  method: 'POST', expected: 201 },
-  ];
+// Table - array of objects
+const endpoints = [
+  { path: '/api/users', method: 'GET', expected: 200 },
+  { path: '/api/posts', method: 'GET', expected: 200 },
+  { path: '/api/auth',  method: 'POST', expected: 201 },
+];
+smartLog.table(endpoints);
 
-  smartLog.table(endpoints);
-});
+// Table with specific columns
+smartLog.table(endpoints, ['path', 'method']);
+
+// Dir - object inspection (handles circular references)
+smartLog.dir({ nested: { deeply: { value: 42 } } });
 ```
 
-**Output:**
+**Table output:**
 ```
 path | method | expected
 --- | --- | ---
@@ -167,35 +127,7 @@ path | method | expected
 /api/auth | POST | 201
 ```
 
-### Table with Specific Columns
-
-```typescript
-smartLog.table(endpoints, ['path', 'method']);
-// Only shows path and method columns
-```
-
-### Dir - Object Inspection
-
-```typescript
-test('inspecting objects', async ({ page, smartLog }) => {
-  await page.goto('https://example.com');
-
-  const pageInfo = {
-    url: page.url(),
-    title: await page.title(),
-    viewport: page.viewportSize(),
-    cookies: await page.context().cookies(),
-  };
-
-  smartLog.dir(pageInfo);
-});
-```
-
----
-
-## Performance Timing
-
-### Basic Timing
+### Timing
 
 ```typescript
 test('page load performance', async ({ page, smartLog }) => {
@@ -213,148 +145,238 @@ test('page load performance', async ({ page, smartLog }) => {
 });
 ```
 
-### Checkpoints with timeLog
+Use `timeLog` for checkpoints without stopping the timer:
 
 ```typescript
-test('workflow timing', async ({ page, smartLog }) => {
-  smartLog.time('workflow');
+smartLog.time('workflow');
+await page.goto('https://app.com');
+smartLog.timeLog('workflow', 'page loaded');     // elapsed so far
+await page.click('#start');
+smartLog.timeLog('workflow', 'action triggered');
+await page.waitForSelector('.result');
+smartLog.timeEnd('workflow');                     // final elapsed
+```
 
-  await page.goto('https://app.com');
-  smartLog.timeLog('workflow', 'page loaded');
+### Assertions
 
-  await page.click('#start');
-  smartLog.timeLog('workflow', 'action triggered');
+`smartLog.assert()` logs only when the condition is false — nothing logged when true:
 
-  await page.waitForSelector('.result');
-  smartLog.timeEnd('workflow');
-});
+```typescript
+smartLog.assert(response.ok(), 'API should return 200');
+smartLog.assert(title.length > 0, 'Page must have a title');
+smartLog.assert(status < 400, 'Expected success status, got', status);
+```
+
+### Counters
+
+```typescript
+const links = await page.locator('a').all();
+for (const link of links) {
+  const href = await link.getAttribute('href');
+  if (href?.startsWith('http')) {
+    smartLog.count('external-links');  // "external-links: 1", "external-links: 2", ...
+  } else {
+    smartLog.count('internal-links');
+  }
+}
+smartLog.countReset('external-links');
+smartLog.countReset('internal-links');
+```
+
+### Stack Traces
+
+```typescript
+smartLog.trace('reached checkpoint');
+// Logs "Trace: reached checkpoint" followed by the call stack
+```
+
+### Buffer Control
+
+```typescript
+smartLog.clear();                       // Clear buffer and reset group depth
+const entries = smartLog.getBuffer();   // Get current buffer contents (copy)
+await smartLog.flush();                 // Manually flush to console
 ```
 
 ---
 
-## Assertions and Counters
+## Global Access / Page Object Models
 
-### Inline Assertions
+The `smartLog` export is a proxy that delegates to the current test's logger. Import it anywhere — no need to pass the fixture through parameters.
 
-`smartLog.assert()` logs only when the condition is false:
+### Page Object Model
 
 ```typescript
-test('validation with assertions', async ({ page, smartLog }) => {
-  await page.goto('https://app.com');
+// pages/login.page.ts
+import { smartLog } from 'playwright-smart-logger';
+import { Page } from '@playwright/test';
 
-  const title = await page.title();
-  smartLog.assert(title.length > 0, 'Page must have a title');
-  smartLog.assert(page.url().includes('app.com'), 'URL mismatch');
+export class LoginPage {
+  constructor(private page: Page) {}
 
-  const status = 200;
-  smartLog.assert(status < 400, 'Expected success status, got', status);
-  // Nothing logged ^ because all conditions are true
+  async login(username: string, password: string) {
+    smartLog.group('LoginPage.login');
+    smartLog.info('Logging in as', username);
+
+    await this.page.fill('#username', username);
+    await this.page.fill('#password', password);
+
+    smartLog.time('login-submit');
+    await this.page.click('#submit');
+    await this.page.waitForURL('**/dashboard');
+    smartLog.timeEnd('login-submit');
+
+    smartLog.info('Login successful');
+    smartLog.groupEnd();
+  }
+}
+```
+
+```typescript
+// pages/dashboard.page.ts
+import { smartLog } from 'playwright-smart-logger';
+import { Page } from '@playwright/test';
+
+export class DashboardPage {
+  constructor(private page: Page) {}
+
+  async getStats() {
+    smartLog.debug('Fetching dashboard stats');
+    const stats = await this.page.locator('.stats').textContent();
+    smartLog.debug('Stats:', stats);
+    return stats;
+  }
+}
+```
+
+```typescript
+// tests/login.spec.ts
+import { test, expect } from 'playwright-smart-logger';
+import { LoginPage } from '../pages/login.page';
+import { DashboardPage } from '../pages/dashboard.page';
+
+test('user can login and view dashboard', async ({ page, smartLog }) => {
+  //                                                     ^^^^^^^^ activates the logger
+  const loginPage = new LoginPage(page);
+  await loginPage.login('alice', 'password123');
+
+  const dashboard = new DashboardPage(page);
+  const stats = await dashboard.getStats();
+  expect(stats).toBeTruthy();
 });
 ```
 
-### Counters for Tracking
+### Helper Functions
 
 ```typescript
-test('counting operations', async ({ page, smartLog }) => {
-  await page.goto('https://app.com');
+// helpers/api.ts
+import { smartLog } from 'playwright-smart-logger';
+import { Page } from '@playwright/test';
 
-  const links = await page.locator('a').all();
-  for (const link of links) {
-    const href = await link.getAttribute('href');
-    if (href?.startsWith('http')) {
-      smartLog.count('external-links');
-    } else {
-      smartLog.count('internal-links');
+export async function waitForApi(page: Page, url: string) {
+  smartLog.debug('Waiting for API:', url);
+  const response = await page.waitForResponse(url);
+  smartLog.debug('API responded:', response.status());
+  return response;
+}
+
+export async function retryClick(page: Page, selector: string, maxRetries = 3) {
+  for (let i = 1; i <= maxRetries; i++) {
+    smartLog.count('click-attempts');
+    try {
+      await page.click(selector, { timeout: 2000 });
+      smartLog.info('Click succeeded on attempt', i);
+      return;
+    } catch {
+      smartLog.warn(`Click attempt ${i}/${maxRetries} failed`);
     }
   }
-  // Logs: "external-links: 1", "internal-links: 1", "external-links: 2", etc.
+  smartLog.error('All click attempts failed for', selector);
+  throw new Error(`Failed to click ${selector} after ${maxRetries} attempts`);
+}
+```
 
-  smartLog.countReset('external-links');
-  smartLog.countReset('internal-links');
+```typescript
+// tests/checkout.spec.ts
+import { test, expect } from 'playwright-smart-logger';
+import { waitForApi, retryClick } from '../helpers/api';
+
+test('checkout flow', async ({ page, smartLog }) => {
+  await page.goto('https://shop.com/cart');
+
+  await retryClick(page, '#checkout-btn');
+  const response = await waitForApi(page, '**/api/checkout');
+  expect(response.ok()).toBeTruthy();
 });
 ```
 
----
+### Using `getSmartLog()` Instead
 
-## Stack Traces
-
-```typescript
-test('debugging with traces', async ({ smartLog }) => {
-  smartLog.trace('reached initialization');
-  // Logs "Trace: reached initialization" followed by the call stack
-
-  function processData() {
-    smartLog.trace('processing data');
-  }
-
-  processData();
-});
-```
-
----
-
-## FlushOn Configuration
-
-### Common Patterns
+If you prefer an explicit function call over the proxy import:
 
 ```typescript
-// playwright.config.ts
+import { getSmartLog } from 'playwright-smart-logger';
 
-// CI - minimal noise
-use: {
-  smartLog: { flushOn: ['fail'] }
-}
-
-// Development (default)
-use: {
-  smartLog: { flushOn: ['fail', 'retry'] }
-}
-
-// Debug - see everything
-use: {
-  smartLog: { flushOn: ['fail', 'pass', 'skip', 'fixme', 'retry', 'timeout'] }
-}
-
-// Issue investigation - focus on problems
-use: {
-  smartLog: { flushOn: ['fail', 'retry', 'timeout'] }
+export function logStep(message: string) {
+  const log = getSmartLog();
+  log.info(`[STEP] ${message}`);
 }
 ```
 
-### Environment-Based Configuration
-
-```typescript
-// playwright.config.ts
-const smartLogConfig: SmartLogOptions = process.env.CI
-  ? {
-      flushOn: ['fail'],
-      maxBufferSize: 500,
-      capturePageConsole: false,
-    }
-  : {
-      flushOn: ['fail', 'retry'],
-      maxBufferSize: 1000,
-      capturePageConsole: true,
-    };
-
-export default defineConfig({
-  use: {
-    smartLog: smartLogConfig,
-  },
-});
-```
+Both `smartLog` (proxy) and `getSmartLog()` (function) write to the same buffer as the fixture.
 
 ---
 
-## Browser Console Capture
+## Configuration
 
-When `capturePageConsole: true`, browser-side `console.*` calls are captured alongside test logs:
+```typescript
+interface SmartLogOptions {
+  flushOn?: FlushOn[];           // When to display logs (default: ['fail', 'retry'])
+  maxBufferSize?: number;        // Max buffer entries (default: 1000)
+  capturePageConsole?: boolean;  // Capture browser console (default: false)
+}
+
+type FlushOn = 'fail' | 'pass' | 'skip' | 'fixme' | 'retry' | 'timeout';
+```
+
+### `flushOn`
+
+Controls when buffered logs are flushed after a test completes:
+
+| Value | Triggers when |
+|-------|--------------|
+| `'fail'` | Test fails |
+| `'pass'` | Test passes |
+| `'skip'` | Test is skipped (`test.skip()`) |
+| `'fixme'` | Test is marked as expected failure (`test.fail()`) |
+| `'retry'` | Test is being retried |
+| `'timeout'` | Test times out |
+
+Common patterns:
+
+```typescript
+// CI - only failures
+flushOn: ['fail']
+
+// Development - failures and retries (default)
+flushOn: ['fail', 'retry']
+
+// Debug - everything
+flushOn: ['fail', 'pass', 'skip', 'fixme', 'retry', 'timeout']
+```
+
+### `maxBufferSize`
+
+Maximum log entries kept in the buffer. When exceeded, oldest entries are removed. Default: `1000`.
+
+### `capturePageConsole`
+
+When `true`, browser `console.*` calls are captured and added to the buffer with `source: 'browser'`. Default: `false`.
 
 ```typescript
 // playwright.config.ts
 use: {
   smartLog: {
-    flushOn: ['fail', 'retry'],
     capturePageConsole: true,
   }
 }
@@ -362,12 +384,9 @@ use: {
 
 ```typescript
 test('browser console capture', async ({ page, smartLog }) => {
-  smartLog.info('Navigating to app');
   await page.goto('https://app.com');
 
-  // Any console.log/warn/error in the browser will appear in the buffer
-  // with source: 'browser'
-
+  // Browser console.log/warn/error will appear in the buffer
   await page.evaluate(() => {
     console.log('App initialized');
     console.warn('Deprecation notice');
@@ -377,6 +396,76 @@ test('browser console capture', async ({ page, smartLog }) => {
   smartLog.info('Captured', browserLogs.length, 'browser logs');
 });
 ```
+
+### Environment-Based Configuration
+
+```typescript
+// playwright.config.ts
+import type { SmartLogOptions } from 'playwright-smart-logger';
+
+const smartLogConfig: SmartLogOptions = process.env.CI
+  ? { flushOn: ['fail'], maxBufferSize: 500 }
+  : { flushOn: ['fail', 'retry'], maxBufferSize: 1000, capturePageConsole: true };
+
+export default defineConfig({
+  use: {
+    smartLog: smartLogConfig,
+  },
+});
+```
+
+### Project-Specific Configuration
+
+Different projects can have different logging behavior:
+
+```typescript
+// playwright.config.ts
+export default defineConfig({
+  projects: [
+    {
+      name: 'default',
+      use: {
+        smartLog: { flushOn: ['fail', 'retry'] },
+      },
+    },
+    {
+      name: 'debug',
+      use: {
+        smartLog: {
+          flushOn: ['fail', 'pass', 'skip', 'fixme', 'retry', 'timeout'],
+          maxBufferSize: 2000,
+          capturePageConsole: true,
+        },
+      },
+      testMatch: /.*debug.*\.spec\.ts/,
+    },
+    {
+      name: 'ci',
+      use: {
+        smartLog: { flushOn: ['fail'], maxBufferSize: 500 },
+      },
+    },
+  ],
+});
+```
+
+---
+
+## Log Entry Structure
+
+Each buffered log entry has this shape:
+
+```typescript
+interface LogEntry {
+  level: 'log' | 'debug' | 'info' | 'warn' | 'error';
+  args: any[];
+  timestamp: number;
+  source: 'test' | 'browser';
+  groupLevel: number;
+}
+```
+
+Use `smartLog.getBuffer()` to inspect entries programmatically.
 
 ---
 
@@ -410,8 +499,7 @@ test('comprehensive API test', async ({ request, smartLog }) => {
   smartLog.time('list');
   const listRes = await request.get('/api/items', { headers });
   smartLog.timeEnd('list');
-  const items = await listRes.json();
-  smartLog.table(items);
+  smartLog.table(await listRes.json());
   smartLog.groupEnd();
 });
 ```
@@ -429,8 +517,6 @@ test('checkout flow', async ({ page, smartLog }) => {
   smartLog.time('checkout-flow');
 
   await page.fill('#card-number', '4242424242424242');
-  smartLog.log('Card number entered');
-
   await page.fill('#expiry', '12/25');
   await page.fill('#cvv', '123');
   smartLog.log('Card details completed');
@@ -443,10 +529,7 @@ test('checkout flow', async ({ page, smartLog }) => {
     smartLog.log('Payment confirmed');
   } catch (error) {
     smartLog.error('Payment failed');
-    smartLog.dir({
-      url: page.url(),
-      title: await page.title(),
-    });
+    smartLog.dir({ url: page.url(), title: await page.title() });
     throw error;
   }
 
@@ -460,7 +543,6 @@ test('checkout flow', async ({ page, smartLog }) => {
 ```typescript
 test('performance metrics', async ({ page, smartLog }) => {
   smartLog.time('total');
-
   await page.goto('https://app.com');
 
   const metrics = await page.evaluate(() => {
@@ -475,10 +557,8 @@ test('performance metrics', async ({ page, smartLog }) => {
   });
 
   smartLog.table([metrics]);
-
   smartLog.assert(metrics.domContentLoaded < 3000, 'DOM load too slow:', metrics.domContentLoaded, 'ms');
   smartLog.assert(metrics.firstPaint < 1500, 'First paint too slow:', metrics.firstPaint, 'ms');
-
   smartLog.timeEnd('total');
 });
 ```
@@ -487,7 +567,7 @@ test('performance metrics', async ({ page, smartLog }) => {
 
 ## Custom Fixture Extensions
 
-You can extend the smart logger fixture to add domain-specific logging:
+Extend the smart logger fixture to add domain-specific logging:
 
 ```typescript
 // fixtures/app-logger.ts
@@ -527,45 +607,5 @@ test('app test', async ({ page, smartLog, appLog }) => {
   await page.click('#submit');
 
   appLog.logApiCall('POST', '/api/login', 200, 150);
-});
-```
-
----
-
-## Project-Specific Configuration
-
-Different projects can have different logging behavior:
-
-```typescript
-// playwright.config.ts
-export default defineConfig({
-  projects: [
-    {
-      name: 'default',
-      use: {
-        smartLog: { flushOn: ['fail', 'retry'] },
-      },
-    },
-    {
-      name: 'debug',
-      use: {
-        smartLog: {
-          flushOn: ['fail', 'pass', 'skip', 'fixme', 'retry', 'timeout'],
-          maxBufferSize: 2000,
-          capturePageConsole: true,
-        },
-      },
-      testMatch: /.*debug.*\.spec\.ts/,
-    },
-    {
-      name: 'ci',
-      use: {
-        smartLog: {
-          flushOn: ['fail'],
-          maxBufferSize: 500,
-        },
-      },
-    },
-  ],
 });
 ```

@@ -150,6 +150,74 @@ test('checkout flow', async ({ page, smartLog }) => {
 
 ---
 
+## Using the Logger Outside of Tests (Page Objects, Helpers, Utilities)
+
+Import `smartLog` and use it directly — no function call, no parameter passing:
+
+```typescript
+import { smartLog } from 'playwright-smart-logger';
+```
+
+### In a Page Object Model
+
+```typescript
+import { smartLog } from 'playwright-smart-logger';
+import { Page } from '@playwright/test';
+
+class LoginPage {
+  constructor(private page: Page) {}
+
+  async login(username: string, password: string) {
+    smartLog.info('Logging in as', username);
+
+    await this.page.fill('#username', username);
+    await this.page.fill('#password', password);
+    await this.page.click('#submit');
+
+    smartLog.info('Login submitted');
+  }
+}
+```
+
+### In a Helper Function
+
+```typescript
+import { smartLog } from 'playwright-smart-logger';
+
+export async function waitForApiResponse(page: Page, url: string) {
+  smartLog.debug('Waiting for API response:', url);
+
+  const response = await page.waitForResponse(url);
+  smartLog.debug('Got response:', response.status());
+
+  return response;
+}
+```
+
+### How It Works
+
+- `smartLog` is a Proxy that delegates to the **currently running test's** logger
+- Each test still gets its own isolated logger instance — no cross-test pollution
+- Automatic flush and cleanup still work exactly the same
+- Throws a clear error if accessed outside a test (e.g., at module load time)
+- A `getSmartLog()` function is also available if you prefer an explicit function call
+
+### Important
+
+Your test must still use the `smartLog` fixture to activate the logger:
+
+```typescript
+import { test } from 'playwright-smart-logger';
+
+test('checkout flow', async ({ page, smartLog }) => {
+  //                                 ^^^^^^^^ required to activate the logger
+  const loginPage = new LoginPage(page);
+  await loginPage.login('user', 'pass'); // smartLog import works inside here
+});
+```
+
+---
+
 ## Gradual Adoption
 
 Smart Logger does not override `console` globally. You can adopt it file by file:

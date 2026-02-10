@@ -491,6 +491,57 @@ const defaultOptions: Required<SmartLogOptions> = {
   capturePageConsole: false,
 };
 
+// --- Global accessor ---
+
+let currentFixture: SmartLogFixture | null = null;
+
+function assertFixtureActive(): SmartLogFixture {
+  if (!currentFixture) {
+    throw new Error(
+      'smartLog was accessed outside of a test that uses the smartLog fixture. ' +
+      'Make sure your test imports { test } from "playwright-smart-logger" and uses the smartLog fixture.'
+    );
+  }
+  return currentFixture;
+}
+
+/**
+ * Get the SmartLog instance for the currently running test.
+ *
+ * @throws {Error} If called outside of a test using the smartLog fixture.
+ */
+export function getSmartLog(): SmartLogFixture {
+  return assertFixtureActive();
+}
+
+/**
+ * Global SmartLog proxy — access the current test's logger directly from anywhere.
+ * No function call needed, just import and use.
+ *
+ * @throws {Error} If accessed outside of a test using the smartLog fixture.
+ *
+ * @example
+ * ```ts
+ * import { smartLog } from 'playwright-smart-logger';
+ *
+ * class LoginPage {
+ *   async login(username: string, password: string) {
+ *     smartLog.info('Logging in as', username);
+ *   }
+ * }
+ * ```
+ */
+export const smartLog: SmartLogFixture = new Proxy({} as SmartLogFixture, {
+  get(_, prop: string) {
+    const fixture = assertFixtureActive();
+    const value = fixture[prop as keyof SmartLogFixture];
+    if (typeof value === 'function') {
+      return value.bind(fixture);
+    }
+    return value;
+  },
+});
+
 export const test = base.extend<{ smartLog: SmartLogFixture }>({
   smartLog: async ({ page }: { page: Page }, use: (fixture: SmartLogFixture) => Promise<void>, testInfo: TestInfo) => {
     // Get options from test.use() or use defaults
@@ -521,6 +572,9 @@ export const test = base.extend<{ smartLog: SmartLogFixture }>({
       flush: () => logger.flush(),
     };
 
+    // Set global accessor for this test's logger
+    currentFixture = fixture;
+
     await use(fixture);
 
     // After test completion, decide whether to flush
@@ -529,6 +583,7 @@ export const test = base.extend<{ smartLog: SmartLogFixture }>({
         await logger.flush();
       }
     } finally {
+      currentFixture = null;
       await logger.cleanup();
     }
   },
