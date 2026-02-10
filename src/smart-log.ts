@@ -22,6 +22,8 @@ export interface SmartLogOptions {
   maxBufferSize?: number;
   /** Capture browser console logs via page.on('console') (default: false) */
   capturePageConsole?: boolean;
+  /** Attach log output as a file in the test report (default: false) */
+  attachToReport?: boolean;
 }
 
 export type LogLevel = 'log' | 'debug' | 'info' | 'warn' | 'error';
@@ -345,6 +347,15 @@ class SmartLogger {
     process.stdout.write(output + '\n');
     process.stdout.write(chalk.cyan('=== End Smart Logger Output ===') + '\n\n');
 
+    // Attach log output to the test report
+    if (this.options.attachToReport) {
+      const attachment = this.formatBufferForAttachment();
+      await this.testInfo.attach('smart-log', {
+        body: Buffer.from(attachment, 'utf-8'),
+        contentType: 'text/plain',
+      });
+    }
+
     this.clear();
   }
 
@@ -489,6 +500,7 @@ const defaultOptions: Required<SmartLogOptions> = {
   flushOn: ['fail', 'retry'],
   maxBufferSize: 1000,
   capturePageConsole: false,
+  attachToReport: false,
 };
 
 // --- Global accessor ---

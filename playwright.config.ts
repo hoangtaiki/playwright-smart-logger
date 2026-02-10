@@ -60,6 +60,21 @@ export default defineConfig({
       testMatch: /.*flush-on\.spec\.ts/,
     },
 
+    // Project for testing attachToReport behavior
+    {
+      name: 'chromium-attach-report',
+      use: {
+        ...devices['Desktop Chrome'],
+        smartLog: {
+          flushOn: ['fail', 'retry'],
+          maxBufferSize: 1000,
+          capturePageConsole: false,
+          attachToReport: true,
+        } as SmartLogOptions,
+      },
+      testMatch: /.*attach-to-report\.spec\.ts/,
+    },
+
     // Project for testing browser console capture
     {
       name: 'chromium-browser-console',
