@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import type { SmartLogOptions } from './src/smart-log-fixture';
+import type { SmartLogOptions } from './src/smart-log';
 
 /**
  * See https://playwright.dev/docs/test-configuration.

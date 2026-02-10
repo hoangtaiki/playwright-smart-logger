@@ -33,3 +33,7 @@ Thumbs.db
 # Testing
 /test-tmp/
 /temp/
+
+# Coverage
+coverage/
+.nyc_output/

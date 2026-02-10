@@ -41,12 +41,16 @@
     "clean": "rm -rf dist test-results playwright-report",
     "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build && npm run test:ci",
-    "lint": "tsc --noEmit",
-    "lint:fix": "tsc --noEmit --pretty",
+    "lint": "eslint src tests --ext .ts",
+    "lint:fix": "eslint src tests --ext .ts --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "coverage": "nyc playwright test",
     "version:patch": "npm version patch",
     "version:minor": "npm version minor",
     "version:major": "npm version major",
-    "release": "npm run prepublishOnly && npm publish",
+    "release": "semantic-release",
     "dev": "tsc --watch & playwright test --ui"
   },
   "dependencies": {
@@ -69,7 +73,17 @@
     "access": "public"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/git": "^10.0.0",
     "@types/node": "^20.19.33",
+    "@typescript-eslint/eslint-plugin": "^8.55.0",
+    "@typescript-eslint/parser": "^8.55.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-prettier": "^5.5.5",
+    "nyc": "^15.1.0",
+    "prettier": "^3.2.5",
+    "semantic-release": "^23.0.0",
     "typescript": "^5.9.3"
   }
 }
