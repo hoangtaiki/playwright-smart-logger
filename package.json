@@ -1,0 +1,75 @@
+{
+  "name": "playwright-smart-logger",
+  "version": "1.0.0",
+  "description": "Smart logging fixture for Playwright tests that buffers console output and flushes only on test failures, with advanced features like console groups, timing, and browser console capture",
+  "keywords": [
+    "playwright",
+    "testing",
+    "logging",
+    "qa",
+    "automation",
+    "console",
+    "buffer",
+    "fixture",
+    "typescript",
+    "test-automation",
+    "e2e-testing",
+    "debugging",
+    "smart-logging",
+    "test-framework",
+    "playwright-fixture"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "playwright test",
+    "test:ci": "playwright test --config=playwright.ci.config.ts",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:example": "playwright test tests/example.spec.ts",
+    "test:fixture": "playwright test tests/smart-log.spec.ts",
+    "test:coverage": "playwright test --reporter=html",
+    "clean": "rm -rf dist test-results playwright-report",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run clean && npm run build && npm run test:ci",
+    "lint": "tsc --noEmit",
+    "lint:fix": "tsc --noEmit --pretty",
+    "version:patch": "npm version patch",
+    "version:minor": "npm version minor",
+    "version:major": "npm version major",
+    "release": "npm run prepublishOnly && npm publish",
+    "dev": "tsc --watch & playwright test --ui"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.41.0",
+    "chalk": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hoangtaiki/playwright-smart-logger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hoangtaiki/playwright-smart-logger/issues"
+  },
+  "homepage": "https://github.com/hoangtaiki/playwright-smart-logger#readme",
+  "author": "Harry Tran <duchoang.vp@gmail.com>",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.33",
+    "typescript": "^5.9.3"
+  }
+}
