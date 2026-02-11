@@ -1,3 +1,13 @@
+# 1.0.0 (2026-02-11)
+
+### Features
+
+- Add attachToReport option to SmartLogger and implement related tests ([d758e28](https://github.com/hoangtaiki/playwright-smart-logger/commit/d758e28a328da0d3e99c81ce14d480e7cbdddaff))
+- Enhance Playwright Smart Logger with global access and improved documentation ([4823803](https://github.com/hoangtaiki/playwright-smart-logger/commit/4823803d0726c59b1c1cb3372b975960c89eb0a0))
+- Initial release of Playwright Smart Logger v1.0.0 ([7744005](https://github.com/hoangtaiki/playwright-smart-logger/commit/7744005eca6bab4724196fec8e0b40d65c87478b))
+- Refactor smart logger structure and enhance documentation for custom fixtures ([9a43ff1](https://github.com/hoangtaiki/playwright-smart-logger/commit/9a43ff1c415b16d3568a5fdc010cdd6229cbad3f))
+- **tests:** add comprehensive examples and integration tests for SmartLog ([f2d6740](https://github.com/hoangtaiki/playwright-smart-logger/commit/f2d6740eda7549e866a9cc6e26616fca8eaf0593))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
