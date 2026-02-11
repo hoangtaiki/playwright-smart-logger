@@ -27,3 +27,4 @@ ignore:
   - "**/*.config.js"
   - "**/*.spec.ts"
   - "**/*.test.ts"
+  - "*.config.ts"

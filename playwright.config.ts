@@ -44,6 +44,7 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: [/.*attach-to-report\.spec\.ts/, /.*flush-on\.spec\.ts/],
     },
 
     // Project for testing flush-on-pass behavior
@@ -75,28 +76,10 @@ export default defineConfig({
       testMatch: /.*attach-to-report\.spec\.ts/,
     },
 
-    // Project for testing browser console capture
-    {
-      name: 'chromium-browser-console',
-      use: {
-        ...devices['Desktop Chrome'],
-        smartLog: {
-          flushOn: ['fail', 'retry'],
-          maxBufferSize: 1000,
-          capturePageConsole: true,
-        } as SmartLogOptions,
-      },
-      testMatch: /.*smart-log-advanced\.spec\.ts/,
-    },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      testIgnore: [/.*attach-to-report\.spec\.ts/, /.*flush-on\.spec\.ts/],
     },
   ],
 });

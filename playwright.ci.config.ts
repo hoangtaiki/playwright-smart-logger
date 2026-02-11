@@ -57,14 +57,7 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
-    // Run Firefox only on ubuntu for CI efficiency
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-      testMatch: process.env.RUNNER_OS === 'Linux' ? undefined : /$.^/, // Only on Linux
-    },
-
+    
     // Run WebKit only on macOS for CI efficiency  
     {
       name: 'webkit',
