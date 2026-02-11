@@ -1,6 +1,6 @@
 {
   "name": "playwright-smart-logger",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Smart logging fixture for Playwright tests that buffers console output and flushes only on test failures, with advanced features like console groups, timing, and browser console capture",
   "keywords": [
     "playwright",
