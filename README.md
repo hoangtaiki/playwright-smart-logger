@@ -5,6 +5,7 @@
 [![npm version](https://badge.fury.io/js/playwright-smart-logger.svg)](https://badge.fury.io/js/playwright-smart-logger)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/hoangtaiki/playwright-smart-logger/actions/workflows/ci.yml/badge.svg)](https://github.com/hoangtaiki/playwright-smart-logger/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/hoangtaiki/playwright-smart-logger/branch/main/graph/badge.svg)](https://codecov.io/gh/hoangtaiki/playwright-smart-logger)
 [![Downloads](https://img.shields.io/npm/dt/playwright-smart-logger.svg)](https://www.npmjs.com/package/playwright-smart-logger)
 
 **Smart logging for Playwright — buffers output, flushes only when needed**

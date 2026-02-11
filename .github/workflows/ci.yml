@@ -55,7 +55,7 @@ jobs:
         timeout-minutes: 5
 
       - name: Run tests
-        run: npx playwright test --config=playwright.ci.config.ts
+        run: npx playwright test
         env:
           CI: true
 
