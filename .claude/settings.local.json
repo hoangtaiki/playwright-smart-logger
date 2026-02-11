@@ -15,7 +15,8 @@
       "Bash(npx commitlint:*)",
       "Bash(git rm:*)",
       "Bash(git restore:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "WebFetch(domain:philna.sh)"
     ]
   }
 }

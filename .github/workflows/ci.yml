@@ -64,10 +64,10 @@ jobs:
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage/lcov.info
+          slug: hoangtaiki/playwright-smart-logger
           flags: unittests
           name: codecov-${{ matrix.os }}-${{ matrix.node }}
           fail_ci_if_error: false

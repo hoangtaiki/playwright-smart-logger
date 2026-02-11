@@ -15,8 +15,7 @@ body:
     attributes:
       label: Version
       description: What version of playwright-smart-logger are you using?
-      placeholder: '1.0.0'
-    validations:
+      placeholder: '0.0.1'
       required: true
 
   - type: input
