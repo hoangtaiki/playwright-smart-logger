@@ -28,18 +28,21 @@ Thank you for contributing to Playwright Smart Logger! 🎉
 ### Related Issues
 
 <!-- Link to any related issues, e.g., "Fixes #123" or "Addresses #456" -->
+
 Fixes #
 
 ### Changes Made
 
 <!-- List the main changes made in this PR -->
-- 
-- 
-- 
+
+-
+-
+-
 
 ### Testing
 
 <!-- Describe how you tested your changes -->
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests added/updated
 - [ ] Manual testing performed

@@ -5,7 +5,7 @@ export type {
   SmartLog,
   LogLevel,
   LogEntry,
-  FlushOn
+  FlushOn,
 } from './smart-log';
 
 // Re-export commonly used Playwright types for convenience

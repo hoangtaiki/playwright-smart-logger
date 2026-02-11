@@ -8,30 +8,30 @@ import type { SmartLogOptions } from './src/smart-log';
 export default defineConfig({
   testDir: './tests',
   outputDir: './test-results',
-  
+
   /* Run tests in files in parallel */
   fullyParallel: true,
-  
+
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: true,
-  
+
   /* Retry on CI for stability */
   retries: 2,
-  
+
   /* Use fewer workers in CI for stability */
   workers: 1,
-  
+
   /* Timeout settings for CI */
   timeout: 30000,
   expect: { timeout: 5000 },
-  
+
   /* Reporter optimized for CI */
   reporter: [
     ['github'],
     ['html', { outputFolder: './playwright-report', open: 'never' }],
-    ['list']
+    ['list'],
   ],
-  
+
   /* Shared settings for CI */
   use: {
     /* CI-optimized smart logger settings */
@@ -40,16 +40,16 @@ export default defineConfig({
       maxBufferSize: 500,
       capturePageConsole: false,
     } as SmartLogOptions,
-    
+
     /* Faster settings for CI */
     actionTimeout: 10000,
     navigationTimeout: 30000,
-    
+
     /* Collect trace only on first retry for CI efficiency */
     trace: 'retain-on-failure',
     video: 'retain-on-failure',
     screenshot: 'only-on-failure',
-  } as any,
+  },
 
   /* Configure projects for CI */
   projects: [
@@ -57,8 +57,8 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    
-    // Run WebKit only on macOS for CI efficiency  
+
+    // Run WebKit only on macOS for CI efficiency
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },

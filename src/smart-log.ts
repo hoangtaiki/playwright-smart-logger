@@ -1,4 +1,5 @@
-import { test as base, TestInfo, Page } from '@playwright/test';
+import type { TestInfo, Page } from '@playwright/test';
+import { test as base } from '@playwright/test';
 import chalk from 'chalk';
 
 // Type augmentation for Playwright configuration
@@ -83,18 +84,22 @@ export interface SmartLog {
 function safeStringify(obj: any, indent: number = 2): string {
   const seen = new WeakSet();
   try {
-    return JSON.stringify(obj, (_key, value) => {
-      if (typeof value === 'object' && value !== null) {
-        if (seen.has(value)) {
-          return '[Circular]';
+    return JSON.stringify(
+      obj,
+      (_key, value) => {
+        if (typeof value === 'object' && value !== null) {
+          if (seen.has(value)) {
+            return '[Circular]';
+          }
+          seen.add(value);
         }
-        seen.add(value);
-      }
-      if (typeof value === 'bigint') {
-        return value.toString();
-      }
-      return value;
-    }, indent);
+        if (typeof value === 'bigint') {
+          return value.toString();
+        }
+        return value;
+      },
+      indent
+    );
   } catch {
     return String(obj);
   }
@@ -133,7 +138,7 @@ class SmartLogger {
       return;
     }
 
-    this.pageConsoleListener = (msg) => {
+    this.pageConsoleListener = msg => {
       try {
         const level = this.mapBrowserLogLevel(msg.type());
         const args = msg.args().map((arg: any) => {
@@ -155,16 +160,26 @@ class SmartLogger {
 
   private mapBrowserLogLevel(type: string): LogLevel {
     switch (type) {
-      case 'log': return 'log';
-      case 'debug': return 'debug';
-      case 'info': return 'info';
-      case 'warning': return 'warn';
-      case 'error': return 'error';
-      default: return 'log';
+      case 'log':
+        return 'log';
+      case 'debug':
+        return 'debug';
+      case 'info':
+        return 'info';
+      case 'warning':
+        return 'warn';
+      case 'error':
+        return 'error';
+      default:
+        return 'log';
     }
   }
 
-  private addLogEntry(level: LogLevel, args: any[], source: 'test' | 'browser' = 'test'): void {
+  private addLogEntry(
+    level: LogLevel,
+    args: any[],
+    source: 'test' | 'browser' = 'test'
+  ): void {
     const entry: LogEntry = {
       level,
       args: [...args],
@@ -343,9 +358,13 @@ class SmartLogger {
     const output = this.formatBufferForOutput();
 
     // Print to console with colors
-    process.stdout.write('\n' + chalk.cyan('=== Smart Logger Output ===') + '\n');
+    process.stdout.write(
+      '\n' + chalk.cyan('=== Smart Logger Output ===') + '\n'
+    );
     process.stdout.write(output + '\n');
-    process.stdout.write(chalk.cyan('=== End Smart Logger Output ===') + '\n\n');
+    process.stdout.write(
+      chalk.cyan('=== End Smart Logger Output ===') + '\n\n'
+    );
 
     // Attach log output to the test report
     if (this.options.attachToReport) {
@@ -362,43 +381,53 @@ class SmartLogger {
   // --- Formatting ---
 
   private formatBufferForOutput(): string {
-    return this.buffer.map(entry => {
-      const timestamp = new Date(entry.timestamp).toISOString().slice(11, 23);
-      const sourcePrefix = entry.source === 'browser' ? '[BROWSER] ' : '';
-      const levelColor = this.getLevelColor(entry.level);
-      const indent = '  '.repeat(entry.groupLevel);
+    return this.buffer
+      .map(entry => {
+        const timestamp = new Date(entry.timestamp).toISOString().slice(11, 23);
+        const sourcePrefix = entry.source === 'browser' ? '[BROWSER] ' : '';
+        const levelColor = this.getLevelColor(entry.level);
+        const indent = '  '.repeat(entry.groupLevel);
 
-      let content: string;
-      if ((entry as any).__isTable) {
-        content = this.formatTableData(entry.args[0], entry.args[1]?.__tableColumns);
-      } else if ((entry as any).__isDir) {
-        content = safeStringify(entry.args[0]);
-      } else {
-        content = entry.args.map(formatArg).join(' ');
-      }
+        let content: string;
+        if ((entry as any).__isTable) {
+          content = this.formatTableData(
+            entry.args[0],
+            entry.args[1]?.__tableColumns
+          );
+        } else if ((entry as any).__isDir) {
+          content = safeStringify(entry.args[0]);
+        } else {
+          content = entry.args.map(formatArg).join(' ');
+        }
 
-      return `${chalk.gray(timestamp)} ${levelColor(`[${entry.level.toUpperCase()}]`)} ${indent}${sourcePrefix}${content}`;
-    }).join('\n');
+        return `${chalk.gray(timestamp)} ${levelColor(`[${entry.level.toUpperCase()}]`)} ${indent}${sourcePrefix}${content}`;
+      })
+      .join('\n');
   }
 
   private formatBufferForAttachment(): string {
     const header = `Smart Logger Output - ${this.testInfo.title}\n${'='.repeat(50)}\n\n`;
-    const content = this.buffer.map(entry => {
-      const timestamp = new Date(entry.timestamp).toISOString().slice(11, 23);
-      const sourcePrefix = entry.source === 'browser' ? '[BROWSER] ' : '';
-      const indent = '  '.repeat(entry.groupLevel);
+    const content = this.buffer
+      .map(entry => {
+        const timestamp = new Date(entry.timestamp).toISOString().slice(11, 23);
+        const sourcePrefix = entry.source === 'browser' ? '[BROWSER] ' : '';
+        const indent = '  '.repeat(entry.groupLevel);
 
-      let text: string;
-      if ((entry as any).__isTable) {
-        text = this.formatTableData(entry.args[0], entry.args[1]?.__tableColumns);
-      } else if ((entry as any).__isDir) {
-        text = safeStringify(entry.args[0]);
-      } else {
-        text = entry.args.map(formatArg).join(' ');
-      }
+        let text: string;
+        if ((entry as any).__isTable) {
+          text = this.formatTableData(
+            entry.args[0],
+            entry.args[1]?.__tableColumns
+          );
+        } else if ((entry as any).__isDir) {
+          text = safeStringify(entry.args[0]);
+        } else {
+          text = entry.args.map(formatArg).join(' ');
+        }
 
-      return `${timestamp} [${entry.level.toUpperCase()}] ${indent}${sourcePrefix}${text}`;
-    }).join('\n');
+        return `${timestamp} [${entry.level.toUpperCase()}] ${indent}${sourcePrefix}${text}`;
+      })
+      .join('\n');
 
     return header + content + '\n\n' + '='.repeat(50);
   }
@@ -445,12 +474,18 @@ class SmartLogger {
 
   private getLevelColor(level: LogLevel): (text: string) => string {
     switch (level) {
-      case 'error': return chalk.red;
-      case 'warn': return chalk.yellow;
-      case 'info': return chalk.blue;
-      case 'debug': return chalk.magenta;
-      case 'log': return chalk.white;
-      default: return chalk.white;
+      case 'error':
+        return chalk.red;
+      case 'warn':
+        return chalk.yellow;
+      case 'info':
+        return chalk.blue;
+      case 'debug':
+        return chalk.magenta;
+      case 'log':
+        return chalk.white;
+      default:
+        return chalk.white;
     }
   }
 
@@ -481,11 +516,11 @@ class SmartLogger {
 
     // Map test status to FlushOn values
     const statusMap: { [key: string]: FlushOn } = {
-      'passed': 'pass',
-      'failed': 'fail',
-      'skipped': 'skip',
-      'timedOut': 'timeout',
-      'expected': 'fixme', // For tests marked with test.fail()
+      passed: 'pass',
+      failed: 'fail',
+      skipped: 'skip',
+      timedOut: 'timeout',
+      expected: 'fixme', // For tests marked with test.fail()
     };
 
     if (typeof status === 'string' && status in statusMap) {
@@ -511,7 +546,7 @@ function assertFixtureActive(): SmartLog {
   if (!currentFixture) {
     throw new Error(
       'smartLog was accessed outside of a test that uses the smartLog fixture. ' +
-      'Make sure your test imports { test } from "playwright-smart-logger" and uses the smartLog fixture.'
+        'Make sure your test imports { test } from "playwright-smart-logger" and uses the smartLog fixture.'
     );
   }
   return currentFixture;
@@ -555,10 +590,17 @@ export const smartLog: SmartLog = new Proxy({} as SmartLog, {
 });
 
 export const test = base.extend<{ smartLog: SmartLog }>({
-  smartLog: async ({ page }: { page: Page }, use: (fixture: SmartLog) => Promise<void>, testInfo: TestInfo) => {
+  smartLog: async (
+    { page }: { page: Page },
+    use: (fixture: SmartLog) => Promise<void>,
+    testInfo: TestInfo
+  ) => {
     // Get options from test.use() or use defaults
     const userOptions = (testInfo.project.use as any).smartLog || {};
-    const options: Required<SmartLogOptions> = { ...defaultOptions, ...userOptions };
+    const options: Required<SmartLogOptions> = {
+      ...defaultOptions,
+      ...userOptions,
+    };
 
     const logger = new SmartLogger(testInfo, page, options);
 
@@ -571,13 +613,13 @@ export const test = base.extend<{ smartLog: SmartLog }>({
       group: (...args) => logger.group(...args),
       groupEnd: () => logger.groupEnd(),
       table: (data, columns) => logger.table(data, columns),
-      dir: (obj) => logger.dir(obj),
-      time: (label) => logger.time(label),
-      timeEnd: (label) => logger.timeEnd(label),
+      dir: obj => logger.dir(obj),
+      time: label => logger.time(label),
+      timeEnd: label => logger.timeEnd(label),
       timeLog: (label, ...args) => logger.timeLog(label, ...args),
       assert: (condition, ...args) => logger.assert(condition, ...args),
-      count: (label) => logger.count(label),
-      countReset: (label) => logger.countReset(label),
+      count: label => logger.count(label),
+      countReset: label => logger.countReset(label),
       trace: (...args) => logger.trace(...args),
       clear: () => logger.clear(),
       getBuffer: () => logger.getBuffer(),

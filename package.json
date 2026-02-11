@@ -39,10 +39,10 @@
     "test:fixture": "playwright test tests/smart-log.spec.ts",
     "test:coverage": "playwright test --reporter=html",
     "clean": "rm -rf dist test-results playwright-report",
-    "prepare": "npm run build",
+    "prepare": "husky && npm run build",
     "prepublishOnly": "npm run clean && npm run build && npm run test:ci",
-    "lint": "eslint src tests --ext .ts",
-    "lint:fix": "eslint src tests --ext .ts --fix",
+    "lint": "eslint src tests",
+    "lint:fix": "eslint src tests --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
@@ -72,18 +72,25 @@
   "publishConfig": {
     "access": "public"
   },
+  "lint-staged": {
+    "*.{ts,js,css,md}": "prettier --write",
+    "*.{ts,js}": "eslint --cache --fix"
+  },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/js": "^9.39.2",
     "@semantic-release/changelog": "^6.0.0",
     "@semantic-release/git": "^10.0.0",
     "@types/node": "^20.19.33",
-    "@typescript-eslint/eslint-plugin": "^8.55.0",
-    "@typescript-eslint/parser": "^8.55.0",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^9.1.2",
-    "eslint-plugin-prettier": "^5.5.5",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
     "nyc": "^15.1.0",
     "prettier": "^3.2.5",
-    "semantic-release": "^23.0.0",
-    "typescript": "^5.9.3"
+    "semantic-release": "^25.0.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.55.0"
   }
 }

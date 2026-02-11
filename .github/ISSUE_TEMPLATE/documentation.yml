@@ -1,13 +1,13 @@
 name: Documentation Improvement
 description: Suggest improvements to documentation or report documentation issues
-title: "[Docs]: "
-labels: ["documentation", "needs-triage"]
+title: '[Docs]: '
+labels: ['documentation', 'needs-triage']
 body:
   - type: markdown
     attributes:
       value: |
         Thanks for helping improve our documentation! 📚
-        
+
         Please provide as much detail as possible to help us improve the docs.
 
   - type: dropdown

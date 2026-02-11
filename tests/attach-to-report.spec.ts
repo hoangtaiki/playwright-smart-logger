@@ -1,7 +1,6 @@
 import { test, expect } from '../src/smart-log';
 
 test.describe('SmartLog - formatBufferForAttachment', () => {
-
   /**
    * Helper: flush and return the attachment content string.
    * Assumes attachToReport is enabled via the chromium-attach-report project.
@@ -9,14 +8,15 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
   async function getAttachmentContent(smartLog: any): Promise<string> {
     await smartLog.flush();
     const attachments = test.info().attachments;
-    const smartLogAttachment = attachments.find((a: any) => a.name === 'smart-log');
+    const smartLogAttachment = attachments.find(
+      (a: any) => a.name === 'smart-log'
+    );
     expect(smartLogAttachment).toBeDefined();
     expect(smartLogAttachment!.contentType).toBe('text/plain');
     return smartLogAttachment!.body!.toString('utf-8');
   }
 
   test.describe('Header and Footer', () => {
-
     test('should include test title in header', async ({ smartLog }) => {
       smartLog.log('entry');
       const content = await getAttachmentContent(smartLog);
@@ -30,14 +30,17 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
 
       const separator = '='.repeat(50);
       // Header separator
-      expect(content.startsWith(`Smart Logger Output - ${test.info().title}\n${separator}\n\n`)).toBe(true);
+      expect(
+        content.startsWith(
+          `Smart Logger Output - ${test.info().title}\n${separator}\n\n`
+        )
+      ).toBe(true);
       // Footer separator
       expect(content.endsWith('\n\n' + separator)).toBe(true);
     });
   });
 
   test.describe('Timestamp Formatting', () => {
-
     test('should format timestamp as HH:MM:SS.mmm', async ({ smartLog }) => {
       smartLog.log('timestamp test');
       const content = await getAttachmentContent(smartLog);
@@ -48,7 +51,6 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
   });
 
   test.describe('Log Level Labels', () => {
-
     test('should format all levels as uppercase', async ({ smartLog }) => {
       smartLog.log('log msg');
       smartLog.debug('debug msg');
@@ -65,7 +67,9 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
       expect(content).toContain('[ERROR]');
     });
 
-    test('should pair level with message on same line', async ({ smartLog }) => {
+    test('should pair level with message on same line', async ({
+      smartLog,
+    }) => {
       smartLog.info('specific message here');
       const content = await getAttachmentContent(smartLog);
 
@@ -74,13 +78,16 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
       const entryLine = lines.find(l => l.includes('specific message here'));
       expect(entryLine).toBeDefined();
       expect(entryLine).toContain('[INFO]');
-      expect(entryLine).toMatch(/^\d{2}:\d{2}:\d{2}\.\d{3} \[INFO\] specific message here$/);
+      expect(entryLine).toMatch(
+        /^\d{2}:\d{2}:\d{2}\.\d{3} \[INFO\] specific message here$/
+      );
     });
   });
 
   test.describe('Browser Source Prefix', () => {
-
-    test('should not include [BROWSER] prefix for test source', async ({ smartLog }) => {
+    test('should not include [BROWSER] prefix for test source', async ({
+      smartLog,
+    }) => {
       smartLog.log('test source entry');
       const content = await getAttachmentContent(smartLog);
 
@@ -92,7 +99,6 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
   });
 
   test.describe('Group Indentation', () => {
-
     test('should indent entries inside a group', async ({ smartLog }) => {
       smartLog.log('level 0');
       smartLog.group('Group');
@@ -131,8 +137,9 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
   });
 
   test.describe('Table Data Formatting', () => {
-
-    test('should format array table data in attachment', async ({ smartLog }) => {
+    test('should format array table data in attachment', async ({
+      smartLog,
+    }) => {
       smartLog.table([
         { name: 'Alice', age: 30 },
         { name: 'Bob', age: 25 },
@@ -160,7 +167,9 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
       expect(content).not.toMatch(/\bage\b.*\|/);
     });
 
-    test('should format single object table as key-value pairs', async ({ smartLog }) => {
+    test('should format single object table as key-value pairs', async ({
+      smartLog,
+    }) => {
       smartLog.table({ key1: 'value1', key2: 'value2' });
 
       const content = await getAttachmentContent(smartLog);
@@ -197,8 +206,9 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
   });
 
   test.describe('Dir Formatting', () => {
-
-    test('should format dir entries with safeStringify', async ({ smartLog }) => {
+    test('should format dir entries with safeStringify', async ({
+      smartLog,
+    }) => {
       smartLog.dir({ name: 'test', nested: { value: 42 } });
 
       const content = await getAttachmentContent(smartLog);
@@ -222,7 +232,6 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
   });
 
   test.describe('Regular Args Formatting', () => {
-
     test('should format string args', async ({ smartLog }) => {
       smartLog.log('hello', 'world');
 
@@ -277,8 +286,9 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
   });
 
   test.describe('Mixed Entry Types', () => {
-
-    test('should format a mix of regular, table, and dir entries', async ({ smartLog }) => {
+    test('should format a mix of regular, table, and dir entries', async ({
+      smartLog,
+    }) => {
       smartLog.info('Start of test');
       smartLog.table([{ step: 1, status: 'ok' }]);
       smartLog.dir({ detail: 'some object' });
@@ -299,7 +309,9 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
       expect(content).toContain('Failure detected');
     });
 
-    test('should format grouped table and dir entries', async ({ smartLog }) => {
+    test('should format grouped table and dir entries', async ({
+      smartLog,
+    }) => {
       smartLog.group('Data');
       smartLog.table([{ id: 1 }]);
       smartLog.dir({ key: 'val' });
@@ -319,15 +331,18 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
   });
 
   test.describe('Multiple Flushes', () => {
-
-    test('should create separate attachments per flush', async ({ smartLog }) => {
+    test('should create separate attachments per flush', async ({
+      smartLog,
+    }) => {
       smartLog.log('batch 1');
       await smartLog.flush();
 
       smartLog.log('batch 2');
       await smartLog.flush();
 
-      const attachments = test.info().attachments.filter((a: any) => a.name === 'smart-log');
+      const attachments = test
+        .info()
+        .attachments.filter((a: any) => a.name === 'smart-log');
       expect(attachments).toHaveLength(2);
 
       const content1 = attachments[0].body!.toString('utf-8');
@@ -341,11 +356,14 @@ test.describe('SmartLog - formatBufferForAttachment', () => {
   });
 
   test.describe('Empty Buffer', () => {
-
-    test('should not create attachment when buffer is empty', async ({ smartLog }) => {
+    test('should not create attachment when buffer is empty', async ({
+      smartLog,
+    }) => {
       await smartLog.flush();
 
-      const attachments = test.info().attachments.filter((a: any) => a.name === 'smart-log');
+      const attachments = test
+        .info()
+        .attachments.filter((a: any) => a.name === 'smart-log');
       expect(attachments).toHaveLength(0);
     });
   });

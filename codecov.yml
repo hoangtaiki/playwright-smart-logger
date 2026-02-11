@@ -11,20 +11,20 @@ coverage:
         threshold: 2%
 
 comment:
-  layout: "reach,diff,flags,tree,reach"
+  layout: 'reach,diff,flags,tree,reach'
   behavior: default
   require_changes: false
   require_base: no
   require_head: yes
 
 ignore:
-  - "tests/**/*"
-  - "dist/**/*"
-  - "playwright-report/**/*"
-  - "test-results/**/*"
-  - "coverage/**/*"
-  - "**/*.config.ts"
-  - "**/*.config.js"
-  - "**/*.spec.ts"
-  - "**/*.test.ts"
-  - "*.config.ts"
+  - 'tests/**/*'
+  - 'dist/**/*'
+  - 'playwright-report/**/*'
+  - 'test-results/**/*'
+  - 'coverage/**/*'
+  - '**/*.config.ts'
+  - '**/*.config.js'
+  - '**/*.spec.ts'
+  - '**/*.test.ts'
+  - '*.config.ts'

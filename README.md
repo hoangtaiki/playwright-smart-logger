@@ -68,9 +68,9 @@ import type { SmartLogOptions } from 'playwright-smart-logger';
 export default defineConfig({
   use: {
     smartLog: {
-      flushOn: ['fail', 'retry'],       // when to show logs (default)
-      maxBufferSize: 1000,               // max buffered entries (default)
-      capturePageConsole: false,         // capture browser console (default)
+      flushOn: ['fail', 'retry'], // when to show logs (default)
+      maxBufferSize: 1000, // max buffered entries (default)
+      capturePageConsole: false, // capture browser console (default)
     } as SmartLogOptions,
   },
 });
@@ -98,9 +98,10 @@ class LoginPage {
 It's a proxy that delegates to the current test's logger. Each test still gets full isolation.
 
 > **Note:** Your test must destructure `smartLog` to activate the logger:
+>
 > ```typescript
 > test('login', async ({ page, smartLog }) => {
-> //                          ^^^^^^^^ required
+>   //                          ^^^^^^^^ required
 >   const loginPage = new LoginPage(page);
 >   await loginPage.login('user', 'pass');
 > });
@@ -112,17 +113,17 @@ A `getSmartLog()` function is also available if you prefer explicit function cal
 
 The `smartLog` fixture mirrors the `console` API:
 
-| Method | Description |
-|--------|-------------|
+| Method                                  | Description             |
+| --------------------------------------- | ----------------------- |
 | `log`, `debug`, `info`, `warn`, `error` | Log at different levels |
-| `group` / `groupEnd` | Indented log groups |
-| `table(data, columns?)` | Structured data display |
-| `dir(obj)` | Object inspection |
-| `time` / `timeLog` / `timeEnd` | Performance timing |
-| `assert(condition, ...args)` | Log only on failure |
-| `count` / `countReset` | Counters |
-| `trace` | Stack trace |
-| `clear` / `getBuffer` / `flush` | Buffer control |
+| `group` / `groupEnd`                    | Indented log groups     |
+| `table(data, columns?)`                 | Structured data display |
+| `dir(obj)`                              | Object inspection       |
+| `time` / `timeLog` / `timeEnd`          | Performance timing      |
+| `assert(condition, ...args)`            | Log only on failure     |
+| `count` / `countReset`                  | Counters                |
+| `trace`                                 | Stack trace             |
+| `clear` / `getBuffer` / `flush`         | Buffer control          |
 
 ## Logging Inside Custom Fixtures
 
@@ -132,17 +133,20 @@ When extending the base test with custom fixtures, you **must** declare `smartLo
 import { test as base, smartLog } from 'playwright-smart-logger';
 
 const test = base.extend({
-  autoTest: [async ({ page, smartLog: _smartLog }, use, testInfo) => {
-    //                       ^^^^^^^^^^^^^^^^ required — ensures the logger is initialized
+  autoTest: [
+    async ({ page, smartLog: _smartLog }, use, testInfo) => {
+      //                       ^^^^^^^^^^^^^^^^ required — ensures the logger is initialized
 
-    // Global proxy works because smartLog fixture is active
-    smartLog.info('Setting up auto fixture');
+      // Global proxy works because smartLog fixture is active
+      smartLog.info('Setting up auto fixture');
 
-    // Or use the fixture directly
-    _smartLog.info('Also works');
+      // Or use the fixture directly
+      _smartLog.info('Also works');
 
-    await use();
-  }, { auto: true }],
+      await use();
+    },
+    { auto: true },
+  ],
 });
 ```
 

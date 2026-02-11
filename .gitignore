@@ -37,5 +37,9 @@ Thumbs.db
 # Coverage
 coverage/
 .nyc_output/
+
+# Lint
+.eslintcache
+
+# Claude
 .claude/
-.claude/settings.local.json
