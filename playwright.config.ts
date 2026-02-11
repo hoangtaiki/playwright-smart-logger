@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import type { SmartLogOptions } from './src/smart-log-fixture';
+import type { SmartLogOptions } from './src/smart-log';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -21,10 +21,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [
-    ['html', { outputFolder: './playwright-report' }],
-    ['list']
-  ],
+  reporter: [['html', { outputFolder: './playwright-report' }], ['list']],
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -44,6 +41,7 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: [/.*attach-to-report\.spec\.ts/, /.*flush-on\.spec\.ts/],
     },
 
     // Project for testing flush-on-pass behavior
@@ -60,28 +58,25 @@ export default defineConfig({
       testMatch: /.*flush-on\.spec\.ts/,
     },
 
-    // Project for testing browser console capture
+    // Project for testing attachToReport behavior
     {
-      name: 'chromium-browser-console',
+      name: 'chromium-attach-report',
       use: {
         ...devices['Desktop Chrome'],
         smartLog: {
           flushOn: ['fail', 'retry'],
           maxBufferSize: 1000,
-          capturePageConsole: true,
+          capturePageConsole: false,
+          attachToReport: true,
         } as SmartLogOptions,
       },
-      testMatch: /.*smart-log-advanced\.spec\.ts/,
-    },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      testMatch: /.*attach-to-report\.spec\.ts/,
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      testIgnore: [/.*attach-to-report\.spec\.ts/, /.*flush-on\.spec\.ts/],
     },
   ],
 });

@@ -4,8 +4,8 @@
 
 We actively support the following versions with security updates:
 
-| Version | Supported          |
-| ------- | ------------------ |
+| Version | Supported         |
+| ------- | ----------------- |
 | 1.x     | ✅ Active support |
 | < 1.0   | ❌ Not supported  |
 
@@ -18,12 +18,14 @@ We take security vulnerabilities seriously. If you discover a security vulnerabi
 **Please do NOT report security vulnerabilities through public GitHub issues.**
 
 Instead, please report security vulnerabilities via:
+
 - Email: [security@your-domain.com]
 - GitHub Security Advisories (recommended)
 
 ### What to Include
 
 Please include the following information in your report:
+
 - Description of the vulnerability
 - Steps to reproduce the issue
 - Potential impact assessment
@@ -57,11 +59,13 @@ When using Playwright Smart Logger:
 ### Scope
 
 This security policy covers:
+
 - The core `playwright-smart-logger` package
 - Security issues in dependencies
 - Documentation that could lead to security issues
 
 Out of scope:
+
 - Issues in user test code
 - General Playwright security issues (report to Playwright directly)
 - Node.js or browser security issues

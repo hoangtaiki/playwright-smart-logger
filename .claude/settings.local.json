@@ -1,7 +1,22 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx playwright test:*)"
+      "Bash(npx playwright test:*)",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl:*)",
+      "Bash(node -e:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm install:*)",
+      "Bash(npx husky:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx prettier:*)",
+      "Bash(npx commitlint:*)",
+      "Bash(git rm:*)",
+      "Bash(git restore:*)",
+      "Bash(git add:*)",
+      "WebFetch(domain:philna.sh)"
     ]
   }
 }

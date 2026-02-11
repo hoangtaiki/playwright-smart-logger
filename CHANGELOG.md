@@ -2,13 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/0.0.1/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
-## [1.0.0] - 2026-02-09
+## [0.0.1] - 2026-02-11
 
 ### Added
+
 - 🎉 Initial release of Playwright Smart Logger
 - ✅ Automatic console method override (log, warn, error, info, debug)
 - 🎯 Smart flushing - only show logs on test failure/timeout/retry by default
@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🚀 Performance optimizations for large test suites
 
 ### Features
+
 - **Console Override**: Automatically captures all console methods
 - **Smart Flushing**: Reduces console noise by 90% on passing tests
 - **Advanced Logging**: Support for console.group, console.table, console.time
@@ -36,11 +37,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Extensibility**: Easy to extend with custom fixture patterns
 
 ### Documentation
+
 - Complete README with installation and usage examples
 - Advanced examples document with 70+ real-world scenarios
 - Contributing guidelines and development setup
 - TypeScript API documentation
 - Performance benchmarks and best practices
 
-[Unreleased]: https://github.com/username/playwright-smart-logger/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/username/playwright-smart-logger/releases/tag/v1.0.0
+[Unreleased]: https://github.com/username/playwright-smart-logger/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/username/playwright-smart-logger/releases/tag/v0.0.1

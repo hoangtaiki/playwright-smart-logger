@@ -40,25 +40,25 @@ test('my test', async ({ page, smartLog }) => {
 
 ### Step 4: Replace `console.*` with `smartLog.*`
 
-| Before (console) | After (smartLog) |
-|-------------------|-----------------|
-| `console.log(...)` | `smartLog.log(...)` |
-| `console.info(...)` | `smartLog.info(...)` |
-| `console.warn(...)` | `smartLog.warn(...)` |
-| `console.error(...)` | `smartLog.error(...)` |
-| `console.debug(...)` | `smartLog.debug(...)` |
-| `console.group(...)` | `smartLog.group(...)` |
-| `console.groupEnd()` | `smartLog.groupEnd()` |
-| `console.table(...)` | `smartLog.table(...)` |
-| `console.dir(...)` | `smartLog.dir(...)` |
-| `console.time(...)` | `smartLog.time(...)` |
-| `console.timeEnd(...)` | `smartLog.timeEnd(...)` |
-| `console.timeLog(...)` | `smartLog.timeLog(...)` |
-| `console.assert(...)` | `smartLog.assert(...)` |
-| `console.count(...)` | `smartLog.count(...)` |
+| Before (console)          | After (smartLog)           |
+| ------------------------- | -------------------------- |
+| `console.log(...)`        | `smartLog.log(...)`        |
+| `console.info(...)`       | `smartLog.info(...)`       |
+| `console.warn(...)`       | `smartLog.warn(...)`       |
+| `console.error(...)`      | `smartLog.error(...)`      |
+| `console.debug(...)`      | `smartLog.debug(...)`      |
+| `console.group(...)`      | `smartLog.group(...)`      |
+| `console.groupEnd()`      | `smartLog.groupEnd()`      |
+| `console.table(...)`      | `smartLog.table(...)`      |
+| `console.dir(...)`        | `smartLog.dir(...)`        |
+| `console.time(...)`       | `smartLog.time(...)`       |
+| `console.timeEnd(...)`    | `smartLog.timeEnd(...)`    |
+| `console.timeLog(...)`    | `smartLog.timeLog(...)`    |
+| `console.assert(...)`     | `smartLog.assert(...)`     |
+| `console.count(...)`      | `smartLog.count(...)`      |
 | `console.countReset(...)` | `smartLog.countReset(...)` |
-| `console.trace(...)` | `smartLog.trace(...)` |
-| `console.clear()` | `smartLog.clear()` |
+| `console.trace(...)`      | `smartLog.trace(...)`      |
+| `console.clear()`         | `smartLog.clear()`         |
 
 The API is identical to `console`, so the migration is a straightforward rename.
 
@@ -73,9 +73,9 @@ import type { SmartLogOptions } from 'playwright-smart-logger';
 export default defineConfig({
   use: {
     smartLog: {
-      flushOn: ['fail', 'retry'],  // When to show logs
-      maxBufferSize: 1000,          // Max buffered entries
-      capturePageConsole: false,    // Capture browser console
+      flushOn: ['fail', 'retry'], // When to show logs
+      maxBufferSize: 1000, // Max buffered entries
+      capturePageConsole: false, // Capture browser console
     } as SmartLogOptions,
   },
 });
@@ -111,6 +111,7 @@ test('checkout flow', async ({ page }) => {
 ```
 
 **Output (every run, pass or fail):**
+
 ```
 Starting checkout test
 Adding item to cart

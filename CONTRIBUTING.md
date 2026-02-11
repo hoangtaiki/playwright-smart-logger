@@ -106,6 +106,7 @@ Feel free to open an issue for questions or reach out to the maintainers.
 ## Recognition
 
 Contributors will be recognized in:
+
 - README.md contributors section
 - GitHub releases
 - NPM package acknowledgments

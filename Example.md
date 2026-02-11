@@ -35,10 +35,10 @@ The `smartLog` fixture provides the same methods as `console`. All methods accep
 
 ```typescript
 test('log levels', async ({ smartLog }) => {
-  smartLog.log('General message');        // White
-  smartLog.debug('Debugging details');    // Magenta
-  smartLog.info('Informational');         // Blue
-  smartLog.warn('Potential issue');       // Yellow
+  smartLog.log('General message'); // White
+  smartLog.debug('Debugging details'); // Magenta
+  smartLog.info('Informational'); // Blue
+  smartLog.warn('Potential issue'); // Yellow
   smartLog.error('Something went wrong'); // Red
 
   // Multiple arguments, just like console
@@ -74,6 +74,7 @@ test('user registration flow', async ({ page, smartLog }) => {
 ```
 
 **Output on failure:**
+
 ```
 === Smart Logger Output ===
 10:30:01.123 [LOG] Setup
@@ -91,13 +92,13 @@ Groups can be nested:
 
 ```typescript
 smartLog.group('API Testing');
-  smartLog.group('Authentication');
-  smartLog.log('Token received');
-  smartLog.groupEnd();
+smartLog.group('Authentication');
+smartLog.log('Token received');
+smartLog.groupEnd();
 
-  smartLog.group('CRUD Operations');
-  smartLog.log('Creating resource');
-  smartLog.groupEnd();
+smartLog.group('CRUD Operations');
+smartLog.log('Creating resource');
+smartLog.groupEnd();
 smartLog.groupEnd();
 ```
 
@@ -108,7 +109,7 @@ smartLog.groupEnd();
 const endpoints = [
   { path: '/api/users', method: 'GET', expected: 200 },
   { path: '/api/posts', method: 'GET', expected: 200 },
-  { path: '/api/auth',  method: 'POST', expected: 201 },
+  { path: '/api/auth', method: 'POST', expected: 201 },
 ];
 smartLog.table(endpoints);
 
@@ -120,6 +121,7 @@ smartLog.dir({ nested: { deeply: { value: 42 } } });
 ```
 
 **Table output:**
+
 ```
 path | method | expected
 --- | --- | ---
@@ -136,13 +138,13 @@ test('page load performance', async ({ page, smartLog }) => {
 
   smartLog.time('navigation');
   await page.goto('https://app.com');
-  smartLog.timeEnd('navigation');  // "navigation: 842ms"
+  smartLog.timeEnd('navigation'); // "navigation: 842ms"
 
   smartLog.time('interactive');
   await page.waitForLoadState('networkidle');
-  smartLog.timeEnd('interactive');  // "interactive: 356ms"
+  smartLog.timeEnd('interactive'); // "interactive: 356ms"
 
-  smartLog.timeEnd('total');  // "total: 1198ms"
+  smartLog.timeEnd('total'); // "total: 1198ms"
 });
 ```
 
@@ -151,11 +153,11 @@ Use `timeLog` for checkpoints without stopping the timer:
 ```typescript
 smartLog.time('workflow');
 await page.goto('https://app.com');
-smartLog.timeLog('workflow', 'page loaded');     // elapsed so far
+smartLog.timeLog('workflow', 'page loaded'); // elapsed so far
 await page.click('#start');
 smartLog.timeLog('workflow', 'action triggered');
 await page.waitForSelector('.result');
-smartLog.timeEnd('workflow');                     // final elapsed
+smartLog.timeEnd('workflow'); // final elapsed
 ```
 
 ### Assertions
@@ -175,7 +177,7 @@ const links = await page.locator('a').all();
 for (const link of links) {
   const href = await link.getAttribute('href');
   if (href?.startsWith('http')) {
-    smartLog.count('external-links');  // "external-links: 1", "external-links: 2", ...
+    smartLog.count('external-links'); // "external-links: 1", "external-links: 2", ...
   } else {
     smartLog.count('internal-links');
   }
@@ -194,9 +196,9 @@ smartLog.trace('reached checkpoint');
 ### Buffer Control
 
 ```typescript
-smartLog.clear();                       // Clear buffer and reset group depth
-const entries = smartLog.getBuffer();   // Get current buffer contents (copy)
-await smartLog.flush();                 // Manually flush to console
+smartLog.clear(); // Clear buffer and reset group depth
+const entries = smartLog.getBuffer(); // Get current buffer contents (copy)
+await smartLog.flush(); // Manually flush to console
 ```
 
 ---
@@ -332,9 +334,9 @@ Both `smartLog` (proxy) and `getSmartLog()` (function) write to the same buffer 
 
 ```typescript
 interface SmartLogOptions {
-  flushOn?: FlushOn[];           // When to display logs (default: ['fail', 'retry'])
-  maxBufferSize?: number;        // Max buffer entries (default: 1000)
-  capturePageConsole?: boolean;  // Capture browser console (default: false)
+  flushOn?: FlushOn[]; // When to display logs (default: ['fail', 'retry'])
+  maxBufferSize?: number; // Max buffer entries (default: 1000)
+  capturePageConsole?: boolean; // Capture browser console (default: false)
 }
 
 type FlushOn = 'fail' | 'pass' | 'skip' | 'fixme' | 'retry' | 'timeout';
@@ -344,26 +346,26 @@ type FlushOn = 'fail' | 'pass' | 'skip' | 'fixme' | 'retry' | 'timeout';
 
 Controls when buffered logs are flushed after a test completes:
 
-| Value | Triggers when |
-|-------|--------------|
-| `'fail'` | Test fails |
-| `'pass'` | Test passes |
-| `'skip'` | Test is skipped (`test.skip()`) |
-| `'fixme'` | Test is marked as expected failure (`test.fail()`) |
-| `'retry'` | Test is being retried |
-| `'timeout'` | Test times out |
+| Value       | Triggers when                                      |
+| ----------- | -------------------------------------------------- |
+| `'fail'`    | Test fails                                         |
+| `'pass'`    | Test passes                                        |
+| `'skip'`    | Test is skipped (`test.skip()`)                    |
+| `'fixme'`   | Test is marked as expected failure (`test.fail()`) |
+| `'retry'`   | Test is being retried                              |
+| `'timeout'` | Test times out                                     |
 
 Common patterns:
 
 ```typescript
 // CI - only failures
-flushOn: ['fail']
+flushOn: ['fail'];
 
 // Development - failures and retries (default)
-flushOn: ['fail', 'retry']
+flushOn: ['fail', 'retry'];
 
 // Debug - everything
-flushOn: ['fail', 'pass', 'skip', 'fixme', 'retry', 'timeout']
+flushOn: ['fail', 'pass', 'skip', 'fixme', 'retry', 'timeout'];
 ```
 
 ### `maxBufferSize`
@@ -551,9 +553,7 @@ test('performance metrics', async ({ page, smartLog }) => {
     return {
       domContentLoaded: Math.round(nav.domContentLoadedEventEnd - nav.startTime),
       loadComplete: Math.round(nav.loadEventEnd - nav.startTime),
-      firstPaint: Math.round(
-        performance.getEntriesByName('first-paint')[0]?.startTime || 0
-      ),
+      firstPaint: Math.round(performance.getEntriesByName('first-paint')[0]?.startTime || 0),
     };
   });
 
@@ -577,16 +577,19 @@ import { test as base, smartLog } from 'playwright-smart-logger';
 
 const test = base.extend({
   // BAD — smartLog is NOT listed as a dependency
-  myFixture: [async ({ page }, use) => {
-    smartLog.info('Setting up');  // Throws! Logger may not be initialized yet
-    await use();
-  }, { auto: true }],
+  myFixture: [
+    async ({ page }, use) => {
+      smartLog.info('Setting up'); // Throws! Logger may not be initialized yet
+      await use();
+    },
+    { auto: true },
+  ],
 });
 ```
 
 Playwright runs fixtures in dependency order. Since `myFixture` only depends on `page`, there is no guarantee the `smartLog` fixture has been set up first. When it hasn't, the global proxy calls `assertFixtureActive()` and throws:
 
-> *"smartLog was accessed outside of a test that uses the smartLog fixture."*
+> _"smartLog was accessed outside of a test that uses the smartLog fixture."_
 
 ### The Fix
 
@@ -597,15 +600,18 @@ import { test as base, smartLog } from 'playwright-smart-logger';
 
 const test = base.extend({
   // GOOD — smartLog is declared as a dependency
-  myFixture: [async ({ page, smartLog: _smartLog }, use) => {
-    //                       ^^^^^^^^^^^^^^^^ tells Playwright to initialize the logger first
+  myFixture: [
+    async ({ page, smartLog: _smartLog }, use) => {
+      //                       ^^^^^^^^^^^^^^^^ tells Playwright to initialize the logger first
 
-    // Both the global proxy and the fixture variable work
-    smartLog.info('Setting up via global proxy');
-    _smartLog.info('Setting up via fixture');
+      // Both the global proxy and the fixture variable work
+      smartLog.info('Setting up via global proxy');
+      _smartLog.info('Setting up via fixture');
 
-    await use();
-  }, { auto: true }],
+      await use();
+    },
+    { auto: true },
+  ],
 });
 ```
 
@@ -621,21 +627,24 @@ interface Env {
 const env: Env = {};
 
 const test = base.extend({
-  autoSetup: [async ({ page, smartLog: _smartLog }, use, testInfo) => {
-    smartLog.group('Auto Setup');
+  autoSetup: [
+    async ({ page, smartLog: _smartLog }, use, testInfo) => {
+      smartLog.group('Auto Setup');
 
-    if (!env.apiHelper) {
-      const helper = new APIHelper();
-      await helper.signIn();
-      env.apiHelper = helper;
-      smartLog.info('API helper initialized and signed in');
-    } else {
-      smartLog.debug('Reusing existing API helper');
-    }
+      if (!env.apiHelper) {
+        const helper = new APIHelper();
+        await helper.signIn();
+        env.apiHelper = helper;
+        smartLog.info('API helper initialized and signed in');
+      } else {
+        smartLog.debug('Reusing existing API helper');
+      }
 
-    smartLog.groupEnd();
-    await use();
-  }, { auto: true }],
+      smartLog.groupEnd();
+      await use();
+    },
+    { auto: true },
+  ],
 });
 
 export { test };
