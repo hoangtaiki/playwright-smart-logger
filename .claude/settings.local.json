@@ -16,8 +16,6 @@
       "Bash(git rm:*)",
       "Bash(git restore:*)",
       "Bash(git add:*)",
-      "WebFetch(domain:philna.sh)",
-      "WebFetch(domain:app.codecov.io)"
     ]
   }
 }
