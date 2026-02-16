@@ -34,6 +34,11 @@ FAIL  Test 4  [Clean, formatted logs with timestamps and colors]
 
 ## Quick Start
 
+### Requirements
+
+- Node.js 20.0.0 or higher
+- ESM project (this package is ESM-only)
+
 ### 1. Install
 
 ```bash
