@@ -159,4 +159,4 @@ jobs:
           cd test-install
           npm init -y
           npm install ../playwright-smart-logger-*.tgz
-          node -e "console.log(require('playwright-smart-logger'))"
+          node --input-type=module -e "import { test, expect, smartLog, getSmartLog } from 'playwright-smart-logger'; console.log('Exports OK:', { test: typeof test, expect: typeof expect, smartLog: typeof smartLog, getSmartLog: typeof getSmartLog })"
