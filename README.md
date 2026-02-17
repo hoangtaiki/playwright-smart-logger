@@ -37,6 +37,7 @@ FAIL  Test 4  [Clean, formatted logs with timestamps and colors]
 ### Requirements
 
 - Node.js 20.0.0 or higher
+- `@playwright/test` >= 1.41.0 (peer dependency)
 - ESM project (this package is ESM-only)
 
 ### 1. Install
@@ -44,6 +45,12 @@ FAIL  Test 4  [Clean, formatted logs with timestamps and colors]
 ```bash
 npm install playwright-smart-logger
 ```
+
+> `@playwright/test` is a peer dependency. If it isn't already in your project, install it alongside this package:
+>
+> ```bash
+> npm install --save-dev @playwright/test playwright-smart-logger
+> ```
 
 ### 2. Replace your import and add `smartLog` to your test
 
