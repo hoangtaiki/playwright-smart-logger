@@ -1,15 +1,13 @@
 name: Release
 
 on:
-  workflow_run:
-    workflows: [CI]
-    types: [completed]
-    branches: [main]
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
   contents: write
-  issues: write
   pull-requests: write
   id-token: write
 
@@ -17,10 +15,6 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.workflow_run.conclusion == 'success' &&
-       !contains(github.event.workflow_run.head_commit.message, '[skip ci]'))
 
     steps:
       - name: Checkout code
@@ -42,7 +36,11 @@ jobs:
         run: npm run build
 
       - name: Release
-        run: npx release-it --ci
+        uses: changesets/action@v1
+        with:
+          publish: npm run release
+          title: 'chore: release packages'
+          commit: 'chore: release packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: 'true'
