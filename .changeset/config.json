@@ -1,6 +1,9 @@
 {
   "$schema": "https://unpkg.com/@changesets/config/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "hoangtaiki/playwright-smart-logger" }],
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "hoangtaiki/playwright-smart-logger" }
+  ],
   "commit": false,
   "fixed": [],
   "linked": [],
