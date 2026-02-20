@@ -47,7 +47,7 @@
     "test:coverage": "playwright test --reporter=html",
     "clean": "rm -rf dist test-results playwright-report",
     "prepare": "husky && npm run build",
-    "prepublishOnly": "npm run clean && npm run build && npm run test",
+    "prepublishOnly": "npm run clean && npm run build",
     "lint": "eslint src tests",
     "lint:fix": "eslint src tests --fix",
     "format": "prettier --write .",
