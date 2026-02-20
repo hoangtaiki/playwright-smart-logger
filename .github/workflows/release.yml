@@ -1,9 +1,10 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -16,7 +17,10 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       !contains(github.event.workflow_run.head_commit.message, '[skip ci]'))
 
     steps:
       - name: Checkout code
@@ -29,45 +33,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '22'
-          registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: TypeScript check
-        run: npm run typecheck
-
-      - name: Lint code
-        run: npm run lint
-
-      - name: Check formatting
-        run: npm run format:check
-
       - name: Build project
         run: npm run build
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-        timeout-minutes: 15
-
-      - name: Run tests
-        run: npm test
-        env:
-          CI: true
-
-      - name: Generate coverage report
-        run: npm run coverage
-        continue-on-error: true
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: hoangtaiki/playwright-smart-logger
-          flags: unittests
-          name: codecov-release
-          fail_ci_if_error: false
 
       - name: Release
         run: npx release-it --ci
