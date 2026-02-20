@@ -1,5 +1,11 @@
 # [1.1.0](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.0.0...v1.1.0) (2026-02-18)
 
+## 1.2.1
+
+### Patch Changes
+
+- [`6327aa7`](https://github.com/hoangtaiki/playwright-smart-logger/commit/6327aa7fc534b73c2fa9375c08ed16eafba96e0d) Thanks [@hoangtaiki](https://github.com/hoangtaiki)! - Minor update
+
 ## 1.2.0
 
 ### Minor Changes
