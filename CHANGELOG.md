@@ -1,5 +1,11 @@
 # [1.1.0](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.0.0...v1.1.0) (2026-02-18)
 
+## 1.2.0
+
+### Minor Changes
+
+- [`83a49cf`](https://github.com/hoangtaiki/playwright-smart-logger/commit/83a49cf7862b4456ebc98007feaa6a434ad9bf25) Thanks [@hoangtaiki](https://github.com/hoangtaiki)! - Bug Fixes
+
 ### Bug Fixes
 
 - increase timeout for Playwright browser installation and simplify release commit message format ([afd1bd4](https://github.com/hoangtaiki/playwright-smart-logger/commit/afd1bd40024cf0a280c719adf76cd568c13fe7cb))
