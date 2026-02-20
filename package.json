@@ -80,7 +80,8 @@
   "homepage": "https://github.com/hoangtaiki/playwright-smart-logger#readme",
   "author": "Harry Tran <duchoang.vp@gmail.com>",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "lint-staged": {
     "*.{ts,js,css,md}": "prettier --write",
