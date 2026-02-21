@@ -1,3 +1,9 @@
+## [1.2.1](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.2.0...v1.2.1) (2026-02-21)
+
+### Bug Fixes
+
+- update actions/checkout and actions/setup-node to v6 in CI and release workflows ([3d7e892](https://github.com/hoangtaiki/playwright-smart-logger/commit/3d7e89229a744706b291e0fe064ecde12cf34a1d))
+
 # [1.2.0](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.1.0...v1.2.0) (2026-02-21)
 
 ### Features
