@@ -1,6 +1,6 @@
 {
   "name": "playwright-smart-logger",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Smart logging fixture for Playwright tests that buffers console output and flushes only on test failures, with advanced features like console groups, timing, and browser console capture",
   "keywords": [
     "playwright",
@@ -71,7 +71,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hoangtaiki/playwright-smart-logger.git"
+    "url": "git+https://github.com/hoangtaiki/playwright-smart-logger.git"
   },
   "bugs": {
     "url": "https://github.com/hoangtaiki/playwright-smart-logger/issues"
