@@ -1,3 +1,9 @@
+# [1.2.0](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.1.0...v1.2.0) (2026-02-21)
+
+### Features
+
+- update version to 1.2.0 and enhance CI workflows ([#19](https://github.com/hoangtaiki/playwright-smart-logger/issues/19)) ([05ce48e](https://github.com/hoangtaiki/playwright-smart-logger/commit/05ce48e520be70e711918ecf77be4ef70d28a7dd))
+
 # [1.1.0](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.0.0...v1.1.0) (2026-02-18)
 
 ### Bug Fixes
