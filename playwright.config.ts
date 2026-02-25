@@ -41,7 +41,11 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      testIgnore: [/.*attach-to-report\.spec\.ts/, /.*flush-on\.spec\.ts/],
+      testIgnore: [
+        /.*attach-to-report\.spec\.ts/,
+        /.*flush-on\.spec\.ts/,
+        /.*always-flush\.spec\.ts/,
+      ],
     },
 
     // Project for testing flush-on-pass behavior
@@ -72,6 +76,20 @@ export default defineConfig({
       testMatch: /.*configuration\.spec\.ts/,
     },
 
+    // Project for testing alwaysFlush behavior
+    {
+      name: 'chromium-always-flush',
+      use: {
+        ...devices['Desktop Chrome'],
+        smartLog: {
+          alwaysFlush: true,
+          maxBufferSize: 1000,
+          capturePageConsole: false,
+        } as SmartLogOptions,
+      },
+      testMatch: /.*always-flush\.spec\.ts/,
+    },
+
     // Project for testing attachToReport behavior
     {
       name: 'chromium-attach-report',
@@ -90,7 +108,11 @@ export default defineConfig({
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-      testIgnore: [/.*attach-to-report\.spec\.ts/, /.*flush-on\.spec\.ts/],
+      testIgnore: [
+        /.*attach-to-report\.spec\.ts/,
+        /.*flush-on\.spec\.ts/,
+        /.*always-flush\.spec\.ts/,
+      ],
     },
   ],
 });
