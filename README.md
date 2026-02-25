@@ -82,12 +82,26 @@ export default defineConfig({
   use: {
     smartLog: {
       flushOn: ['fail', 'retry'], // when to show logs (default)
+      alwaysFlush: false, // always flush regardless of status (default)
       maxBufferSize: 1000, // max buffered entries (default)
       capturePageConsole: false, // capture browser console (default)
     } as SmartLogOptions,
   },
 });
 ```
+
+### Always flush locally
+
+Set `alwaysFlush: true` to print logs after every test — handy when running locally where you always want to see output:
+
+```typescript
+// playwright.config.ts
+smartLog: {
+  alwaysFlush: process.env.CI !== 'true', // flush every test locally, only on fail/retry in CI
+} as SmartLogOptions,
+```
+
+`alwaysFlush` takes precedence over `flushOn` — when it is `true`, `flushOn` is ignored.
 
 ## Use Anywhere — Page Objects, Helpers, Utilities
 
