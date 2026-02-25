@@ -83,6 +83,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         smartLog: {
           alwaysFlush: true,
+          attachToReport: true, // lets us assert the flush side-effect from the test body
           maxBufferSize: 1000,
           capturePageConsole: false,
         } as SmartLogOptions,
