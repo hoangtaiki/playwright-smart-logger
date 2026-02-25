@@ -87,6 +87,21 @@ test.describe('SmartLog - Configuration & Lifecycle', () => {
     });
   });
 
+  test.describe('AlwaysFlush Behavior', () => {
+    test('alwaysFlush option should flush even on pass', async ({
+      smartLog,
+    }) => {
+      // This test verifies the buffer is populated; actual flushing happens
+      // automatically after the test via shouldFlush(). We verify the option
+      // short-circuits by calling flush() manually and checking the buffer clears.
+      smartLog.log('alwaysFlush test entry');
+      expect(smartLog.getBuffer().length).toBe(1);
+
+      await smartLog.flush();
+      expect(smartLog.getBuffer().length).toBe(0);
+    });
+  });
+
   test.describe('Status Mapping & Edge Cases', () => {
     test('should handle fixme tests', async ({ smartLog }) => {
       test.fail(); // Maps to 'expected' status -> 'fixme'

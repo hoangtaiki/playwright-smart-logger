@@ -19,6 +19,8 @@ export type FlushOn = 'fail' | 'pass' | 'skip' | 'fixme' | 'retry' | 'timeout';
 export interface SmartLogOptions {
   /** When to flush logs (default: ['fail', 'retry']) */
   flushOn?: FlushOn[];
+  /** Always flush logs regardless of test status — useful for local debugging (default: false) */
+  alwaysFlush?: boolean;
   /** Maximum number of log entries to keep in buffer (default: 1000) */
   maxBufferSize?: number;
   /** Capture browser console logs via page.on('console') (default: false) */
@@ -506,6 +508,11 @@ class SmartLogger {
   // --- Flush decision ---
 
   public shouldFlush(testInfo: TestInfo): boolean {
+    // Always flush when alwaysFlush is enabled (e.g. local development)
+    if (this.options.alwaysFlush) {
+      return true;
+    }
+
     const status = testInfo.status;
     const retry = testInfo.retry;
 
@@ -533,6 +540,7 @@ class SmartLogger {
 
 const defaultOptions: Required<SmartLogOptions> = {
   flushOn: ['fail', 'retry'],
+  alwaysFlush: false,
   maxBufferSize: 1000,
   capturePageConsole: false,
   attachToReport: false,
