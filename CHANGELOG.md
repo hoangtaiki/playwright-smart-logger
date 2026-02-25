@@ -1,3 +1,9 @@
+# [1.3.0](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.2.1...v1.3.0) (2026-02-25)
+
+### Features
+
+- add alwaysFlush option for SmartLog to enable immediate log flushing ([#24](https://github.com/hoangtaiki/playwright-smart-logger/issues/24)) ([da5b97d](https://github.com/hoangtaiki/playwright-smart-logger/commit/da5b97d13361b14cd86dcf20919e17ea008f8559))
+
 ## [1.2.1](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.2.0...v1.2.1) (2026-02-21)
 
 ### Bug Fixes
