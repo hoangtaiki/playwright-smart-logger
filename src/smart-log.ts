@@ -27,6 +27,10 @@ export interface SmartLogOptions {
   capturePageConsole?: boolean;
   /** Attach log output as a file in the test report (default: false) */
   attachToReport?: boolean;
+  /** Auto-log network responses with status >= threshold (default: false) */
+  captureNetworkErrors?: boolean;
+  /** HTTP status threshold for network error capture (default: 400) */
+  captureNetworkErrorThreshold?: number;
 }
 
 export type LogLevel = 'log' | 'debug' | 'info' | 'warn' | 'error';
@@ -126,6 +130,7 @@ class SmartLogger {
   private counters: Map<string, number> = new Map();
   private groupDepth: number = 0;
   private pageConsoleListener?: (msg: any) => void;
+  private pageResponseListener?: (response: any) => void;
 
   constructor(
     private testInfo: TestInfo,
@@ -133,6 +138,7 @@ class SmartLogger {
     private options: Required<SmartLogOptions>
   ) {
     this.setupBrowserConsoleCapture();
+    this.setupNetworkErrorCapture();
   }
 
   private setupBrowserConsoleCapture(): void {
@@ -158,6 +164,31 @@ class SmartLogger {
     };
 
     this.page.on('console', this.pageConsoleListener);
+  }
+
+  private setupNetworkErrorCapture(): void {
+    if (!this.options.captureNetworkErrors || !this.page) {
+      return;
+    }
+
+    const threshold = this.options.captureNetworkErrorThreshold ?? 400;
+
+    this.pageResponseListener = (response: any) => {
+      try {
+        if (response.status() >= threshold) {
+          const method = response.request().method();
+          this.addLogEntry(
+            'error',
+            [`[Network ${response.status()}] ${method} ${response.url()}`],
+            'browser'
+          );
+        }
+      } /* c8 ignore next 3 */ catch {
+        // Silently ignore network capture errors
+      }
+    };
+
+    this.page.on('response', this.pageResponseListener);
   }
 
   private mapBrowserLogLevel(type: string): LogLevel {
@@ -494,10 +525,15 @@ class SmartLogger {
   // --- Cleanup ---
 
   public async cleanup(): Promise<void> {
-    if (this.pageConsoleListener && this.page) {
+    if (this.page) {
       try {
-        this.page.off('console', this.pageConsoleListener);
-      } catch {
+        if (this.pageConsoleListener) {
+          this.page.off('console', this.pageConsoleListener);
+        }
+        if (this.pageResponseListener) {
+          this.page.off('response', this.pageResponseListener);
+        }
+      } /* c8 ignore next 3 */ catch {
         // Ignore cleanup errors
       }
     }
@@ -544,6 +580,8 @@ const defaultOptions: Required<SmartLogOptions> = {
   maxBufferSize: 1000,
   capturePageConsole: false,
   attachToReport: false,
+  captureNetworkErrors: false,
+  captureNetworkErrorThreshold: 400,
 };
 
 // --- Global accessor ---
