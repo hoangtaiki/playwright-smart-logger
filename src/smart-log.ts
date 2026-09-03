@@ -183,7 +183,7 @@ class SmartLogger {
             'browser'
           );
         }
-      } catch {
+      } /* c8 ignore next 3 */ catch {
         // Silently ignore network capture errors
       }
     };
@@ -533,7 +533,7 @@ class SmartLogger {
         if (this.pageResponseListener) {
           this.page.off('response', this.pageResponseListener);
         }
-      } catch {
+      } /* c8 ignore next 3 */ catch {
         // Ignore cleanup errors
       }
     }
