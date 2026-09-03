@@ -1,3 +1,9 @@
+# [1.4.0](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.3.0...v1.4.0) (2026-09-03)
+
+### Features
+
+- add captureNetworkErrors option to SmartLogger ([#106](https://github.com/hoangtaiki/playwright-smart-logger/issues/106)) ([e85a76f](https://github.com/hoangtaiki/playwright-smart-logger/commit/e85a76f106867317f217954539a85512ab27f122))
+
 # [1.3.0](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.2.1...v1.3.0) (2026-02-25)
 
 ### Features
