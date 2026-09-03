@@ -45,6 +45,7 @@ export default defineConfig({
         /.*attach-to-report\.spec\.ts/,
         /.*flush-on\.spec\.ts/,
         /.*always-flush\.spec\.ts/,
+        /.*capture-network-errors\.spec\.ts/,
       ],
     },
 
@@ -106,6 +107,36 @@ export default defineConfig({
       testMatch: /.*attach-to-report\.spec\.ts/,
     },
 
+    // Project for testing captureNetworkErrors with threshold 400 (captures 4xx and 5xx)
+    {
+      name: 'chromium-capture-network-errors',
+      use: {
+        ...devices['Desktop Chrome'],
+        smartLog: {
+          flushOn: ['fail', 'retry'],
+          maxBufferSize: 1000,
+          captureNetworkErrors: true,
+          captureNetworkErrorThreshold: 400,
+        } as SmartLogOptions,
+      },
+      testMatch: /.*capture-network-errors\.spec\.ts/,
+    },
+
+    // Project for testing captureNetworkErrors with threshold 500 (5xx only)
+    {
+      name: 'chromium-capture-network-errors-high-threshold',
+      use: {
+        ...devices['Desktop Chrome'],
+        smartLog: {
+          flushOn: ['fail', 'retry'],
+          maxBufferSize: 1000,
+          captureNetworkErrors: true,
+          captureNetworkErrorThreshold: 500,
+        } as SmartLogOptions,
+      },
+      testMatch: /.*capture-network-errors\.spec\.ts/,
+    },
+
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
@@ -113,6 +144,7 @@ export default defineConfig({
         /.*attach-to-report\.spec\.ts/,
         /.*flush-on\.spec\.ts/,
         /.*always-flush\.spec\.ts/,
+        /.*capture-network-errors\.spec\.ts/,
       ],
     },
   ],
