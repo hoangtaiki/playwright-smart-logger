@@ -1,3 +1,9 @@
+# [1.5.0](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.4.0...v1.5.0) (2026-10-06)
+
+### Features
+
+- add smartLogOptions option fixture so Playwright 1.60+ accepts the config ([e91dce5](https://github.com/hoangtaiki/playwright-smart-logger/commit/e91dce53886affa395e89f15e788d563f400e2d1))
+
 # [1.4.0](https://github.com/hoangtaiki/playwright-smart-logger/compare/v1.3.0...v1.4.0) (2026-09-03)
 
 ### Features
