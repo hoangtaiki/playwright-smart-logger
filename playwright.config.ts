@@ -1,5 +1,14 @@
+import { createRequire } from 'node:module';
 import { defineConfig, devices } from '@playwright/test';
 import type { SmartLogOptions } from './src/smart-log';
+
+// Playwright 1.60+ rejects the legacy `use.smartLog` key, so the project that covers it only exists before.
+const [major, minor] = createRequire(import.meta.url)(
+  '@playwright/test/package.json'
+)
+  .version.split('.')
+  .map(Number);
+const legacyKeyAccepted = major === 1 && minor < 60;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -29,7 +38,7 @@ export default defineConfig({
     trace: 'on-first-retry',
 
     /* Smart Logger Configuration */
-    smartLog: {
+    smartLogOptions: {
       flushOn: ['fail', 'retry'],
       maxBufferSize: 1000,
       capturePageConsole: false,
@@ -54,7 +63,7 @@ export default defineConfig({
       name: 'chromium-flush-pass',
       use: {
         ...devices['Desktop Chrome'],
-        smartLog: {
+        smartLogOptions: {
           flushOn: ['pass', 'fail', 'skip'],
           maxBufferSize: 1000,
           capturePageConsole: false,
@@ -68,7 +77,7 @@ export default defineConfig({
       name: 'chromium-capture-console',
       use: {
         ...devices['Desktop Chrome'],
-        smartLog: {
+        smartLogOptions: {
           flushOn: ['fail', 'retry'],
           maxBufferSize: 1000,
           capturePageConsole: true,
@@ -82,7 +91,7 @@ export default defineConfig({
       name: 'chromium-always-flush',
       use: {
         ...devices['Desktop Chrome'],
-        smartLog: {
+        smartLogOptions: {
           alwaysFlush: true,
           attachToReport: true, // lets us assert the flush side-effect from the test body
           maxBufferSize: 1000,
@@ -97,7 +106,7 @@ export default defineConfig({
       name: 'chromium-attach-report',
       use: {
         ...devices['Desktop Chrome'],
-        smartLog: {
+        smartLogOptions: {
           flushOn: ['fail', 'retry'],
           maxBufferSize: 1000,
           capturePageConsole: false,
@@ -112,7 +121,7 @@ export default defineConfig({
       name: 'chromium-capture-network-errors',
       use: {
         ...devices['Desktop Chrome'],
-        smartLog: {
+        smartLogOptions: {
           flushOn: ['fail', 'retry'],
           maxBufferSize: 1000,
           captureNetworkErrors: true,
@@ -127,7 +136,7 @@ export default defineConfig({
       name: 'chromium-capture-network-errors-high-threshold',
       use: {
         ...devices['Desktop Chrome'],
-        smartLog: {
+        smartLogOptions: {
           flushOn: ['fail', 'retry'],
           maxBufferSize: 1000,
           captureNetworkErrors: true,
@@ -136,6 +145,22 @@ export default defineConfig({
       },
       testMatch: /.*capture-network-errors\.spec\.ts/,
     },
+
+    // Project for testing the deprecated `use.smartLog` key (Playwright before 1.60 only)
+    ...(legacyKeyAccepted
+      ? [
+          {
+            name: 'chromium-legacy-smartlog',
+            use: {
+              ...devices['Desktop Chrome'],
+              smartLogOptions: {} as SmartLogOptions, // so only the legacy key is set here
+              smartLog: { maxBufferSize: 3 } as SmartLogOptions,
+            },
+            testMatch: /.*configuration\.spec\.ts/,
+            grep: /@legacy-smartlog/,
+          },
+        ]
+      : []),
 
     {
       name: 'webkit',

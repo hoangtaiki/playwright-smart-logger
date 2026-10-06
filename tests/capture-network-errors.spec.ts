@@ -1,7 +1,7 @@
 import { test, expect } from '../src/smart-log';
 
 function getSmartLogConfig() {
-  return (test.info().project.use as any)?.smartLog ?? {};
+  return (test.info().project.use as any)?.smartLogOptions ?? {};
 }
 
 test.describe('SmartLog - captureNetworkErrors', () => {

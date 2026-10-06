@@ -16,11 +16,11 @@ test.describe('SmartLog - AlwaysFlush Option', () => {
     smartLog,
   }) => {
     test.skip(
-      !(test.info().project.use as any)?.smartLog?.alwaysFlush,
+      !(test.info().project.use as any)?.smartLogOptions?.alwaysFlush,
       'Requires alwaysFlush: true'
     );
     test.skip(
-      !(test.info().project.use as any)?.smartLog?.attachToReport,
+      !(test.info().project.use as any)?.smartLogOptions?.attachToReport,
       'Requires attachToReport: true to observe the flush side-effect'
     );
 
@@ -51,7 +51,7 @@ test.describe('SmartLog - AlwaysFlush Option', () => {
     smartLog,
   }) => {
     test.skip(
-      !(test.info().project.use as any)?.smartLog?.alwaysFlush,
+      !(test.info().project.use as any)?.smartLogOptions?.alwaysFlush,
       'Requires alwaysFlush: true'
     );
 
