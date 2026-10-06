@@ -656,7 +656,7 @@ export const test = base.extend<{ smartLog: SmartLog }>({
   ) => {
     // Defaults, then the legacy `use.smartLog` key (only reachable on Playwright before 1.60), then
     // `smartLogOptions` from the config or test.use().
-    const legacyOptions = (testInfo.project.use as any).smartLog || {};
+    const legacyOptions = (testInfo.project.use as any).smartLog;
     const options: Required<SmartLogOptions> = {
       ...defaultOptions,
       ...legacyOptions,
