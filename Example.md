@@ -379,7 +379,7 @@ When `true`, browser `console.*` calls are captured and added to the buffer with
 ```typescript
 // playwright.config.ts
 use: {
-  smartLog: {
+  smartLogOptions: {
     capturePageConsole: true,
   }
 }
@@ -412,7 +412,7 @@ const smartLogConfig: SmartLogOptions = process.env.CI
 
 export default defineConfig({
   use: {
-    smartLog: smartLogConfig,
+    smartLogOptions: smartLogConfig,
   },
 });
 ```
@@ -428,13 +428,13 @@ export default defineConfig({
     {
       name: 'default',
       use: {
-        smartLog: { flushOn: ['fail', 'retry'] },
+        smartLogOptions: { flushOn: ['fail', 'retry'] },
       },
     },
     {
       name: 'debug',
       use: {
-        smartLog: {
+        smartLogOptions: {
           flushOn: ['fail', 'pass', 'skip', 'fixme', 'retry', 'timeout'],
           maxBufferSize: 2000,
           capturePageConsole: true,
@@ -445,7 +445,7 @@ export default defineConfig({
     {
       name: 'ci',
       use: {
-        smartLog: { flushOn: ['fail'], maxBufferSize: 500 },
+        smartLogOptions: { flushOn: ['fail'], maxBufferSize: 500 },
       },
     },
   ],
