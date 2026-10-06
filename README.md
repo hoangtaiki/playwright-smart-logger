@@ -80,7 +80,7 @@ import type { SmartLogOptions } from 'playwright-smart-logger';
 
 export default defineConfig({
   use: {
-    smartLog: {
+    smartLogOptions: {
       flushOn: ['fail', 'retry'], // when to show logs (default)
       alwaysFlush: false, // always flush regardless of status (default)
       maxBufferSize: 1000, // max buffered entries (default)
@@ -90,13 +90,18 @@ export default defineConfig({
 });
 ```
 
+> **Playwright 1.60 and later:** the option is `smartLogOptions`. The older `use.smartLog` key is
+> rejected there (`Fixture "smartLog" cannot be overridden in the configuration "use" section`), because
+> Playwright only lets `use` set fixtures registered as options. `smartLog` still works on Playwright
+> before 1.60 and is deprecated; `smartLogOptions` works on every supported version and wins when both are set.
+
 ### Always flush locally
 
 Set `alwaysFlush: true` to print logs after every test — handy when running locally where you always want to see output:
 
 ```typescript
 // playwright.config.ts
-smartLog: {
+smartLogOptions: {
   alwaysFlush: process.env.CI !== 'true', // flush every test locally, only on fail/retry in CI
 } as SmartLogOptions,
 ```
