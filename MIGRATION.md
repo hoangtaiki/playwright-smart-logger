@@ -72,7 +72,7 @@ import type { SmartLogOptions } from 'playwright-smart-logger';
 
 export default defineConfig({
   use: {
-    smartLog: {
+    smartLogOptions: {
       flushOn: ['fail', 'retry'], // When to show logs
       maxBufferSize: 1000, // Max buffered entries
       capturePageConsole: false, // Capture browser console
@@ -80,6 +80,8 @@ export default defineConfig({
   },
 });
 ```
+
+> **Playwright 1.60+:** the config key is `smartLogOptions`. The older `smartLog` key still works before 1.60, is deprecated, and is rejected by Playwright 1.60 and later. When both are set, `smartLogOptions` wins.
 
 ---
 
@@ -247,7 +249,7 @@ const smartLogConfig: SmartLogOptions = process.env.CI
 
 export default defineConfig({
   use: {
-    smartLog: smartLogConfig,
+    smartLogOptions: smartLogConfig,
   },
 });
 ```
@@ -261,7 +263,7 @@ export default defineConfig({
 Check that `'fail'` is in your `flushOn` array:
 
 ```typescript
-smartLog: {
+smartLogOptions: {
   flushOn: ['fail'],  // Must include 'fail'
 }
 ```
@@ -277,7 +279,7 @@ import { test, expect } from 'playwright-smart-logger'; // correct
 Add a type assertion:
 
 ```typescript
-smartLog: {
+smartLogOptions: {
   flushOn: ['fail', 'retry'],
 } as SmartLogOptions,
 ```
@@ -287,7 +289,7 @@ smartLog: {
 Add `'pass'` to `flushOn`:
 
 ```typescript
-smartLog: {
+smartLogOptions: {
   flushOn: ['fail', 'pass', 'retry'],
 }
 ```
@@ -297,7 +299,7 @@ smartLog: {
 Reduce `maxBufferSize` or call `smartLog.clear()` between phases:
 
 ```typescript
-smartLog: {
+smartLogOptions: {
   maxBufferSize: 500,
 }
 ```

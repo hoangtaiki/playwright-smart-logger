@@ -4,7 +4,7 @@ test.describe('SmartLog - Configuration Options', () => {
   test.describe('AttachToReport Option', () => {
     test('should attach logs to report when enabled', async ({ smartLog }) => {
       test.skip(
-        !(test.info().project.use as any)?.smartLog?.attachToReport,
+        !(test.info().project.use as any)?.smartLogOptions?.attachToReport,
         'Requires attachToReport: true'
       );
 
@@ -31,7 +31,7 @@ test.describe('SmartLog - Configuration Options', () => {
     });
 
     test('should not attach when disabled (default)', async ({ smartLog }) => {
-      const isAttachEnabled = (test.info().project.use as any)?.smartLog
+      const isAttachEnabled = (test.info().project.use as any)?.smartLogOptions
         ?.attachToReport;
       test.skip(!!isAttachEnabled, 'This test is for attachToReport: false');
 
@@ -45,7 +45,7 @@ test.describe('SmartLog - Configuration Options', () => {
 
     test('should not attach empty buffer', async ({ smartLog }) => {
       test.skip(
-        !(test.info().project.use as any)?.smartLog?.attachToReport,
+        !(test.info().project.use as any)?.smartLogOptions?.attachToReport,
         'Requires attachToReport: true'
       );
 
@@ -58,7 +58,7 @@ test.describe('SmartLog - Configuration Options', () => {
 
     test('should include test title in attachment', async ({ smartLog }) => {
       test.skip(
-        !(test.info().project.use as any)?.smartLog?.attachToReport,
+        !(test.info().project.use as any)?.smartLogOptions?.attachToReport,
         'Requires attachToReport: true'
       );
 
@@ -77,7 +77,7 @@ test.describe('SmartLog - Configuration Options', () => {
       smartLog,
     }) => {
       test.skip(
-        !(test.info().project.use as any)?.smartLog?.attachToReport,
+        !(test.info().project.use as any)?.smartLogOptions?.attachToReport,
         'Requires attachToReport: true'
       );
 
@@ -106,7 +106,7 @@ test.describe('SmartLog - Configuration Options', () => {
       smartLog,
     }) => {
       test.skip(
-        !(test.info().project.use as any)?.smartLog?.capturePageConsole,
+        !(test.info().project.use as any)?.smartLogOptions?.capturePageConsole,
         'Requires capturePageConsole: true'
       );
 
@@ -141,7 +141,7 @@ test.describe('SmartLog - Configuration Options', () => {
       smartLog,
     }) => {
       test.skip(
-        !(test.info().project.use as any)?.smartLog?.capturePageConsole,
+        !(test.info().project.use as any)?.smartLogOptions?.capturePageConsole,
         'Requires capturePageConsole: true'
       );
 
@@ -182,7 +182,7 @@ test.describe('SmartLog - Configuration Options', () => {
       page,
       smartLog,
     }) => {
-      const isCaptureEnabled = (test.info().project.use as any)?.smartLog
+      const isCaptureEnabled = (test.info().project.use as any)?.smartLogOptions
         ?.capturePageConsole;
       test.skip(
         !!isCaptureEnabled,
@@ -210,6 +210,54 @@ test.describe('SmartLog - Configuration Options', () => {
       const buffer = smartLog.getBuffer();
       expect(buffer.length).toBeLessThanOrEqual(1000);
       expect(buffer[buffer.length - 1].args[0]).toBe('entry 1099');
+    });
+  });
+
+  // smartLogOptions is an option fixture, the only kind Playwright 1.60+ lets a config `use` section (or
+  // test.use()) set. The legacy `use.smartLog` key is rejected there.
+  test.describe('smartLogOptions', () => {
+    test.describe('set with test.use()', () => {
+      test.use({ smartLogOptions: { maxBufferSize: 2 } });
+
+      test('should reach the logger', async ({ smartLog }) => {
+        smartLog.info('one');
+        smartLog.info('two');
+        smartLog.info('three');
+
+        const messages = smartLog.getBuffer().map(e => String(e.args[0]));
+        expect(messages).toEqual(['two', 'three']);
+      });
+    });
+
+    test.describe('set to an empty object', () => {
+      test.use({ smartLogOptions: {} });
+
+      // The config value (1000) is also the default, so the boundary is what tells "defaults applied" from
+      // "nothing applied": without the default the buffer would never be trimmed.
+      test('should apply the defaults', async ({ smartLog }) => {
+        for (let i = 0; i < 1001; i++) smartLog.log(`entry ${i}`);
+
+        const buffer = smartLog.getBuffer();
+        expect(buffer).toHaveLength(1000);
+        expect(buffer[0].args[0]).toBe('entry 1');
+      });
+    });
+
+    test('should use the deprecated smartLog key when only that is set @legacy-smartlog', async ({
+      smartLog,
+    }, testInfo) => {
+      test.skip(
+        testInfo.project.name !== 'chromium-legacy-smartlog',
+        'Requires the project that sets only the legacy key (Playwright before 1.60)'
+      );
+
+      for (let i = 0; i < 5; i++) smartLog.info(`entry ${i}`);
+
+      expect(smartLog.getBuffer().map(e => String(e.args[0]))).toEqual([
+        'entry 2',
+        'entry 3',
+        'entry 4',
+      ]);
     });
   });
 });

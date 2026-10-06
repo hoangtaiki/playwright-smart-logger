@@ -5,10 +5,17 @@ import chalk from 'chalk';
 // Type augmentation for Playwright configuration
 declare module '@playwright/test' {
   interface PlaywrightTestOptions {
+    /**
+     * Options for the logger, set in `use` or with `test.use()`. Registered as an option fixture, so
+     * Playwright 1.60 and later accept it (they reject a value for a plain fixture such as `smartLog`).
+     */
+    smartLogOptions?: SmartLogOptions;
+    /** @deprecated Playwright 1.60+ rejects this key in `use`: set `smartLogOptions` instead. */
     smartLog?: SmartLogOptions;
   }
 
   interface PlaywrightWorkerOptions {
+    /** @deprecated Playwright 1.60+ rejects this key in `use`: set `smartLogOptions` instead. */
     smartLog?: SmartLogOptions;
   }
 }
@@ -636,16 +643,24 @@ export const smartLog: SmartLog = new Proxy({} as SmartLog, {
 });
 
 export const test = base.extend<{ smartLog: SmartLog }>({
+  // An option fixture: the only kind Playwright 1.60+ lets a config `use` section set. Its type comes
+  // from the PlaywrightTestOptions augmentation above.
+  smartLogOptions: [{}, { option: true }] as unknown as SmartLogOptions,
   smartLog: async (
-    { page }: { page: Page },
+    {
+      page,
+      smartLogOptions,
+    }: { page: Page; smartLogOptions?: SmartLogOptions },
     use: (fixture: SmartLog) => Promise<void>,
     testInfo: TestInfo
   ) => {
-    // Get options from test.use() or use defaults
-    const userOptions = (testInfo.project.use as any).smartLog || {};
+    // Defaults, then the legacy `use.smartLog` key (only reachable on Playwright before 1.60), then
+    // `smartLogOptions` from the config or test.use().
+    const legacyOptions = (testInfo.project.use as any).smartLog;
     const options: Required<SmartLogOptions> = {
       ...defaultOptions,
-      ...userOptions,
+      ...legacyOptions,
+      ...smartLogOptions,
     };
 
     const logger = new SmartLogger(testInfo, page, options);
